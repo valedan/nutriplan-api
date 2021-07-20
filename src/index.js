@@ -36,6 +36,7 @@ const books = [
 const resolvers = {
   Query: {
     books: () => books,
+    greeting: () => "Hello world!",
   },
 };
 
