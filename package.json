@@ -2,7 +2,10 @@
   "name": "nutriplan-api",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "engines": {
+    "node": "16.x"
+  },
+  "main": "src/index.ts",
   "scripts": {
     "start": "tsc && node ./dist/index.js",
     "dev": "ts-node-dev ./src/index.ts",
