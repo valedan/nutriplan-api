@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Using snake_case because elastic requires it and postgres is awkward without it
+model Food {
+  id                                Int              @id @default(autoincrement())
+  created_at                        DateTime         @default(now())
+  updated_at                        DateTime         @updatedAt
+  data_source                       String
+  description                       String?
+  additional_descriptions           String[]
+  category                          String?
+  brand                             String?
+  gtin_upc                          String?
+  ingredients                       String?
+  serving_size                      Float?
+  serving_size_unit                 ServingSizeUnit?
+  serving_size_description          String?
+  common_names                      String?
+  barcode                           String?
+  doi                               String?
+  protein_calorie_conversion_factor Float?
+  fat_calorie_conversion_factor     Float?
+  carbohydrate_conversion_factor    Float?
+  food_nutrients                    FoodNutrient[]
+
+  @@index([description])
+}
+
+model Nutrient {
+  id             Int            @id @default(autoincrement())
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  name           String
+  unit           NutrientUnit
+  food_nutrients FoodNutrient[]
+}
+
+model FoodNutrient {
+  id          Int      @id @default(autoincrement())
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  food        Food     @relation(fields: [food_id], references: [id])
+  food_id     Int
+  nutrient    Nutrient @relation(fields: [nutrient_id], references: [id])
+  nutrient_id Int
+  amount      Float
+
+  @@index([food_id])
+  @@index([nutrient_id])
+}
+
+enum ServingSizeUnit {
+  g
+  ml
+}
+
+enum NutrientUnit {
+  G
+  KCAL
+  MG
+  kJ
+  SP_GR
+  UG
+  IU
+  MG_ATE
+}
