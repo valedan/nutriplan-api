@@ -7,8 +7,8 @@
   },
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsc && node ./dist/index.js",
-    "dev": "ts-node-dev -r dotenv/config --transpile-only --no-notify ./src/index.ts dotenv_config_path=./.env.development ",
+    "start": "tsc && node ./dist/src/config/index.js",
+    "dev": "ts-node-dev -r dotenv/config --transpile-only --no-notify ./src/config/index.ts dotenv_config_path=./.env.development ",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker compose down",
     "test": "DATABASE_URL=postgresql://dan:nutriplan@localhost:5433/tests npm run docker:up && jest",

@@ -2,8 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { ServerInfo } from "apollo-server";
 import getPort, { makeRange } from "get-port";
 import { GraphQLClient } from "graphql-request";
-import { db } from "../src/db";
-import { server } from "../src/server";
+import { db } from "../src/config/db";
+import { server } from "../src/config/server";
 
 type TestContext = {
   client: GraphQLClient;
