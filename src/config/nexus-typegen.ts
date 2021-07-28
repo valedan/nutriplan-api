@@ -4,7 +4,7 @@
  */
 
 
-import type { Context } from "./config/context"
+import type { Context } from "./context"
 
 
 
