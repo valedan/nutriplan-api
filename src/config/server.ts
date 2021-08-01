@@ -1,5 +1,5 @@
 import { ApolloServer } from "apollo-server";
 import { context } from "./context";
-import { schema } from "./schema";
+import schema from "./schema";
 
-export const server = new ApolloServer({ schema, context });
+export default new ApolloServer({ schema, context });

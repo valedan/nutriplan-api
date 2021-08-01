@@ -2,7 +2,7 @@ import { makeSchema } from "nexus";
 import { join } from "path";
 import * as types from "../api";
 
-export const schema = makeSchema({
+export default makeSchema({
   types,
   outputs: {
     typegen: join(__dirname, "nexus-typegen.ts"),
