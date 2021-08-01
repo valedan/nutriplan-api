@@ -1,3 +1,6 @@
 node_modules
 dist
 coverage
+.eslintrc.cjs
+jest.config.cjs
+**/*/nexus-typegen.ts

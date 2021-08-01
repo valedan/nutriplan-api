@@ -6,10 +6,11 @@ module.exports = {
     project: ["./tsconfig.json"],
     ecmaVersion: "latest",
     sourceType: "module",
+    extraFileExtensions: [".cjs"],
   },
   plugins: ["@typescript-eslint", "jest"],
   extends: [
-    "airbnb-typescript",
+    "airbnb-typescript/base",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:jest/recommended",
@@ -19,4 +20,9 @@ module.exports = {
     "plugin:node/recommended",
     "prettier",
   ],
+  rules: {
+    "node/no-missing-import": "off",
+    "node/no-unpublished-import": "off",
+    "no-void": ["error", { allowAsStatement: true }],
+  },
 };

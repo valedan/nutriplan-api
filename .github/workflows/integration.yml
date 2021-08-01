@@ -18,7 +18,10 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
 
+      - name: Run linting
+        run: npm run lint
+
       - name: Run tests
-        run: npm test
+        run: npm run test
         env:
           DATABASE_URL: postgresql://dan:nutriplan@localhost:5433/tests
