@@ -5,10 +5,34 @@
 type Food {
   brand: String
   category: String
+  data_source: String
   description: String
+  food_nutrients: [FoodNutrient]
   id: Int
+  ingredients: String
+  portions: [Portion]
+  searchScore: Float
+  serving_size: Float
+}
+
+type FoodNutrient {
+  id: Int
+  nutrient: Nutrient
+}
+
+type Nutrient {
+  id: Int
+  name: String
+}
+
+type Portion {
+  gram_weight: Float
+  id: Int
+  measure: String
+  sequence_number: Int
 }
 
 type Query {
   food(id: Int!): Food
+  searchFoods(searchTerm: String!): [Food]
 }

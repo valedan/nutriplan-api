@@ -7,7 +7,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["selectRelationCount"]
+
 }
 
 // Using snake_case because elastic requires it and postgres is awkward without it
@@ -32,8 +34,22 @@ model Food {
   fat_calorie_conversion_factor     Float?
   carbohydrate_conversion_factor    Float?
   food_nutrients                    FoodNutrient[]
+  portions                          Portion[]
 
   @@index([description])
+}
+
+model Portion {
+  id              Int      @id @default(autoincrement())
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  food            Food     @relation(fields: [food_id], references: [id])
+  food_id         Int
+  sequence_number Int      @default(1)
+  measure         String
+  gram_weight     Float
+
+  @@index([food_id])
 }
 
 model Nutrient {

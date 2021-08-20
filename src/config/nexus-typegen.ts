@@ -31,8 +31,28 @@ export interface NexusGenObjects {
   Food: { // root type
     brand?: string | null; // String
     category?: string | null; // String
+    data_source?: string | null; // String
     description?: string | null; // String
+    food_nutrients?: Array<NexusGenRootTypes['FoodNutrient'] | null> | null; // [FoodNutrient]
     id?: number | null; // Int
+    ingredients?: string | null; // String
+    portions?: Array<NexusGenRootTypes['Portion'] | null> | null; // [Portion]
+    searchScore?: number | null; // Float
+    serving_size?: number | null; // Float
+  }
+  FoodNutrient: { // root type
+    id?: number | null; // Int
+    nutrient?: NexusGenRootTypes['Nutrient'] | null; // Nutrient
+  }
+  Nutrient: { // root type
+    id?: number | null; // Int
+    name?: string | null; // String
+  }
+  Portion: { // root type
+    gram_weight?: number | null; // Float
+    id?: number | null; // Int
+    measure?: string | null; // String
+    sequence_number?: number | null; // Int
   }
   Query: {};
 }
@@ -51,11 +71,32 @@ export interface NexusGenFieldTypes {
   Food: { // field return type
     brand: string | null; // String
     category: string | null; // String
+    data_source: string | null; // String
     description: string | null; // String
+    food_nutrients: Array<NexusGenRootTypes['FoodNutrient'] | null> | null; // [FoodNutrient]
     id: number | null; // Int
+    ingredients: string | null; // String
+    portions: Array<NexusGenRootTypes['Portion'] | null> | null; // [Portion]
+    searchScore: number | null; // Float
+    serving_size: number | null; // Float
+  }
+  FoodNutrient: { // field return type
+    id: number | null; // Int
+    nutrient: NexusGenRootTypes['Nutrient'] | null; // Nutrient
+  }
+  Nutrient: { // field return type
+    id: number | null; // Int
+    name: string | null; // String
+  }
+  Portion: { // field return type
+    gram_weight: number | null; // Float
+    id: number | null; // Int
+    measure: string | null; // String
+    sequence_number: number | null; // Int
   }
   Query: { // field return type
     food: NexusGenRootTypes['Food'] | null; // Food
+    searchFoods: Array<NexusGenRootTypes['Food'] | null> | null; // [Food]
   }
 }
 
@@ -63,11 +104,32 @@ export interface NexusGenFieldTypeNames {
   Food: { // field return type name
     brand: 'String'
     category: 'String'
+    data_source: 'String'
     description: 'String'
+    food_nutrients: 'FoodNutrient'
     id: 'Int'
+    ingredients: 'String'
+    portions: 'Portion'
+    searchScore: 'Float'
+    serving_size: 'Float'
+  }
+  FoodNutrient: { // field return type name
+    id: 'Int'
+    nutrient: 'Nutrient'
+  }
+  Nutrient: { // field return type name
+    id: 'Int'
+    name: 'String'
+  }
+  Portion: { // field return type name
+    gram_weight: 'Float'
+    id: 'Int'
+    measure: 'String'
+    sequence_number: 'Int'
   }
   Query: { // field return type name
     food: 'Food'
+    searchFoods: 'Food'
   }
 }
 
@@ -75,6 +137,9 @@ export interface NexusGenArgTypes {
   Query: {
     food: { // args
       id: number; // Int!
+    }
+    searchFoods: { // args
+      searchTerm: string; // String!
     }
   }
 }
