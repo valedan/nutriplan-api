@@ -33,6 +33,7 @@ const sendToElastic = async (foods: Food[]) => {
 //   }
 //   await sendToElastic(buffer);
 // };
+// 2827
 
 // Find all prisma foods updated after last sync date
 // Update elastic with those foods (some will be created)
@@ -42,9 +43,23 @@ const sendToElastic = async (foods: Food[]) => {
 // Delete superfluous documents in elastic
 
 const newFoodRecords = async () => {
-  const newFoods = await prisma.food.findMany({ where: { updated_at: { gt: LAST_SYNC_DATE } } });
+  const newFoods = await prisma.food.findMany({ where: { updated_at: { gt: LAST_SYNC_DATE }, id: { lt: 170832 } } });
   console.log(newFoods);
+  let buffer = [];
+  let counter = 0;
+  for await (const food of newFoods) {
+    counter += 1;
+    if (buffer.length > ELASTIC_BUFFER_SIZE) {
+      await sendToElastic(buffer);
+      buffer = [];
+    }
+    console.log(counter, food.id);
+    buffer.push(food);
+  }
+  await sendToElastic(buffer);
 };
+
+const deletedRecords = async () => {};
 
 const syncData = async () => {
   await newFoodRecords();
