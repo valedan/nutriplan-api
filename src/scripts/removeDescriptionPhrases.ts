@@ -17,7 +17,7 @@ const removePhrases = async () => {
   let index = 0;
   const foods = await prisma.food.findMany({ where: { data_source: { in: DATA_SOURCES } } });
   for await (const food of foods) {
-    if (PHRASES.some((phrase) => food.description.includes(phrase))) {
+    if (PHRASES.some((phrase) => food.description && food.description.includes(phrase))) {
       let newDescription = food.description || "";
       PHRASES.forEach((phrase) => {
         newDescription = newDescription.replace(phrase, "");
@@ -33,6 +33,6 @@ removePhrases()
   .catch((e) => {
     throw e;
   })
-  .finally(async () => {
-    await prisma.$disconnect();
+  .finally(() => {
+    void prisma.$disconnect();
   });
