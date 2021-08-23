@@ -4,7 +4,7 @@ import AppSearchClient from "@elastic/app-search-node";
 
 const ELASTIC_BUFFER_SIZE = 10;
 const RECORD_LIMIT = 1000;
-const LAST_SYNC_DATE = new Date("2021-04-01");
+const LAST_SYNC_DATE = new Date("2021-08-21");
 
 const prisma = new PrismaClient();
 const elastic = new AppSearchClient(
@@ -43,8 +43,7 @@ const sendToElastic = async (foods: Food[]) => {
 // Delete superfluous documents in elastic
 
 const newFoodRecords = async () => {
-  const newFoods = await prisma.food.findMany({ where: { updated_at: { gt: LAST_SYNC_DATE }, id: { lt: 170832 } } });
-  console.log(newFoods);
+  const newFoods = await prisma.food.findMany({ where: { updated_at: { gt: LAST_SYNC_DATE } } });
   let buffer = [];
   let counter = 0;
   for await (const food of newFoods) {

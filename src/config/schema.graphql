@@ -16,6 +16,7 @@ type Food {
 }
 
 type FoodNutrient {
+  amount: Float
   id: Int
   nutrient: Nutrient
 }

@@ -24,6 +24,7 @@ module.exports = {
     "node/no-missing-import": "off",
     "node/no-unpublished-import": "off",
     "no-void": ["error", { allowAsStatement: true }],
+    "no-underscore-dangle": "off",
     "no-restricted-syntax": [
       // Remove for/of restriction because they're useful for async iteration
       // https://github.com/airbnb/javascript/issues/1271#issuecomment-548688952
@@ -40,6 +41,12 @@ module.exports = {
       {
         selector: "WithStatement",
         message: "`with` is disallowed in strict mode because it makes code impossible to predict and optimize.",
+      },
+    ],
+    "node/no-unsupported-features/es-syntax": [
+      "error",
+      {
+        ignores: ["modules"],
       },
     ],
   },

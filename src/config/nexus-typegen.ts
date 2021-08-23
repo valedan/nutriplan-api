@@ -41,6 +41,7 @@ export interface NexusGenObjects {
     serving_size?: number | null; // Float
   }
   FoodNutrient: { // root type
+    amount?: number | null; // Float
     id?: number | null; // Int
     nutrient?: NexusGenRootTypes['Nutrient'] | null; // Nutrient
   }
@@ -81,6 +82,7 @@ export interface NexusGenFieldTypes {
     serving_size: number | null; // Float
   }
   FoodNutrient: { // field return type
+    amount: number | null; // Float
     id: number | null; // Int
     nutrient: NexusGenRootTypes['Nutrient'] | null; // Nutrient
   }
@@ -114,6 +116,7 @@ export interface NexusGenFieldTypeNames {
     serving_size: 'Float'
   }
   FoodNutrient: { // field return type name
+    amount: 'Float'
     id: 'Int'
     nutrient: 'Nutrient'
   }
