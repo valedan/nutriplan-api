@@ -1,23 +1,32 @@
-import { PrismaClient } from "@prisma/client";
-import { NutrientRow } from "./types";
-import { openFile } from "./utils";
+import { PrismaClient, Nutrient } from "@prisma/client"
+import { openFile } from "./utils"
+import { NutrientRow } from "./types"
+import PrismaBuffer from "./PrismaBuffer"
 
-const NUTRIENT_PATH = `./data/nutrient.csv`;
+const PATH = `./data/nutrient.csv`
+const ROW_LIMIT = undefined
+const ROW_SKIP = undefined
 
-export const loadNutrientData = async (prisma: PrismaClient) => {
-  const nutrientFile = openFile(NUTRIENT_PATH);
-  const nutrientBuffer: NutrientRow[] = [];
+const loadNutrientData = async (prisma: PrismaClient): Promise<void> => {
+  let counter = 0
+  const file = openFile(PATH, ROW_SKIP, ROW_LIMIT)
+  const buffer = new PrismaBuffer(prisma, "nutrient", 1000)
 
-  for await (const row of nutrientFile) {
-    const typedRow: NutrientRow = row as NutrientRow;
-    nutrientBuffer.push(typedRow);
+  for await (const row of file) {
+    counter += 1
+    const typedRow: NutrientRow = row as NutrientRow
+
+    await buffer.create({
+      id: Number(typedRow.id),
+      name: typedRow.name,
+      unit: typedRow.unit_name,
+      nutrient_number: Math.floor(Number(typedRow.nutrient_nbr)),
+    } as Nutrient)
+
+    console.log(`Created Nutrient ${counter}`)
   }
 
-  await prisma.nutrient.createMany({
-    data: nutrientBuffer.map((row) => ({
-      id: row.id,
-      name: row.name,
-      unit: row.unit_name,
-    })),
-  });
-};
+  await buffer.flush()
+}
+
+export default loadNutrientData

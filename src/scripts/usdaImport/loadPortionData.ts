@@ -1,46 +1,37 @@
-import { PrismaClient } from "@prisma/client";
-import { FoodPortionRow } from "./types";
-import { openFile } from "./utils";
+import { Portion, PrismaClient } from "@prisma/client"
+import { loadMeasureUnits, openFile } from "./utils"
+import { FoodPortionRow } from "./types"
+import PrismaBuffer from "./PrismaBuffer"
 
-const FOOD_PORTION_PATH = `./data/tidy_food_portion.csv`;
+const PATH = `./data/food_portion.csv`
+const ROW_LIMIT = undefined
+const ROW_SKIP = undefined
 
-export const loadPortionData = async (prisma: PrismaClient) => {
-  const portionFile = openFile(FOOD_PORTION_PATH);
-  let portionBuffer: FoodPortionRow[] = [];
-  let counter = 0;
-  let bufferCounter = 0;
+const loadPortionData = async (prisma: PrismaClient): Promise<void> => {
+  let counter = 0
+  const measureUnits = await loadMeasureUnits()
+  const file = openFile(PATH, ROW_SKIP, ROW_LIMIT)
+  const buffer = new PrismaBuffer(prisma, "portion", 1000)
 
-  const getMeasure = (row: FoodPortionRow) => {
-    if (!row.measure_unit?.trim() && !row.portion_description?.trim() && row.modifier?.trim()) {
-      return "serving";
-    }
-    return `${row.amount} ${row.measure_unit} ${row.portion_description} ${row.modifier}`.toString().trim().toString();
-  };
+  for await (const row of file) {
+    counter += 1
+    const typedRow: FoodPortionRow = row as FoodPortionRow
 
-  const writePortions = async () => {
-    await prisma.portion.createMany({
-      data: portionBuffer.map((row) => ({
-        food_id: row.fdc_id,
-        sequence_number: row.seq_num ? row.seq_num : 1,
-        measure: getMeasure(row),
-        gram_weight: row.gram_weight,
-      })),
-    });
-    portionBuffer = [];
-  };
+    await buffer.create({
+      id: Number(typedRow.id),
+      food_id: Number(typedRow.fdc_id),
+      sequence_number: Number(typedRow.seq_num),
+      measure_unit: measureUnits[typedRow.measure_unit_id],
+      portion_description: typedRow.portion_description,
+      modifier: typedRow.modifier,
+      amount: Number(typedRow.amount),
+      gram_weight: Number(typedRow.gram_weight),
+    } as Portion)
 
-  for await (const row of portionFile) {
-    const typedRow: FoodPortionRow = row as FoodPortionRow;
-    counter += 1;
-    bufferCounter += 1;
-
-    portionBuffer.push(typedRow);
-    if (bufferCounter > 50000) {
-      await writePortions();
-      bufferCounter = 0;
-    }
-    console.log(`Created Portion ${counter}`);
+    console.log(`Created Portion ${counter}`)
   }
 
-  await writePortions();
-};
+  await buffer.flush()
+}
+
+export default loadPortionData

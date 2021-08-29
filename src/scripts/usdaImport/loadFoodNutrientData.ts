@@ -1,38 +1,52 @@
-import { PrismaClient } from "@prisma/client";
-import { FoodNutrientRow } from "./types";
-import { openFile } from "./utils";
+import { PrismaClient, FoodNutrient } from "@prisma/client"
+import { openFile } from "./utils"
+import { FoodNutrientRow } from "./types"
+import PrismaBuffer from "./PrismaBuffer"
 
-const FOOD_NUTRIENT_PATH = `./data/food_nutrient.csv`;
+const PATH = `./data/food_nutrient.csv`
+const ROW_LIMIT = undefined
+const ROW_SKIP = undefined
 
-export const loadFoodNutrientData = async (prisma: PrismaClient) => {
-  const nutrientFile = openFile(FOOD_NUTRIENT_PATH);
-  let foodNutrientBuffer: FoodNutrientRow[] = [];
-  let counter = 0;
-  let bufferCounter = 0;
+const loadFoodNutrientData = async (prisma: PrismaClient): Promise<void> => {
+  let counter = 0
+  const file = openFile(PATH, ROW_SKIP, ROW_LIMIT)
+  const buffer = new PrismaBuffer(prisma, "food_nutrient", 1000)
+  const nutrients = await prisma.nutrient.findMany()
 
-  const writeFoodNutrients = async () => {
-    await prisma.foodNutrient.createMany({
-      data: foodNutrientBuffer.map((row) => ({
-        food_id: row.fdc_id,
-        nutrient_id: row.nutrient_id,
-        amount: row.amount,
-      })),
-    });
-    foodNutrientBuffer = [];
-  };
+  for await (const row of file) {
+    counter += 1
+    const typedRow: FoodNutrientRow = row as FoodNutrientRow
 
-  for await (const row of nutrientFile) {
-    const typedRow: FoodNutrientRow = row as FoodNutrientRow;
-    counter += 1;
-    bufferCounter += 1;
-
-    foodNutrientBuffer.push(typedRow);
-    if (bufferCounter > 250000) {
-      await writeFoodNutrients();
-      bufferCounter = 0;
+    const nutrient = nutrients.find(
+      (n) =>
+        n.id === Number(typedRow.nutrient_id) ||
+        n.nutrient_number === Number(typedRow.nutrient_id)
+    )
+    if (nutrient) {
+      try {
+        await buffer.create({
+          id: Number(typedRow.id),
+          food_id: Number(typedRow.fdc_id),
+          nutrient_id: nutrient.id,
+          amount: Number(typedRow.amount),
+        } as FoodNutrient)
+      } catch (e) {
+        console.log(e)
+        console.log(
+          (buffer.buffer as FoodNutrient[]).map(
+            (fn: FoodNutrient) => fn.food_id
+          )
+        )
+      }
+    } else {
+      console.log(`NUTRIENT MISSING`)
+      console.log(typedRow)
     }
-    console.log(`Created FoodNutrient ${counter}`);
+
+    console.log(`Created FoodNutrient ${counter}`)
   }
 
-  await writeFoodNutrients();
-};
+  await buffer.flush()
+}
+
+export default loadFoodNutrientData

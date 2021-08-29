@@ -21,44 +21,58 @@ model Food {
   description                       String?
   additional_descriptions           String[]
   category                          String?
-  brand                             String?
+  brand_owner                       String?
+  brand_name                        String?
+  subbrand_name                     String?
   gtin_upc                          String?
   ingredients                       String?
+  not_a_significant_source_of       String?
   serving_size                      Float?
   serving_size_unit                 ServingSizeUnit?
   serving_size_description          String?
   common_names                      String?
   barcode                           String?
   doi                               String?
+  historical                        Boolean          @default(false)
   protein_calorie_conversion_factor Float?
   fat_calorie_conversion_factor     Float?
   carbohydrate_conversion_factor    Float?
+  fdc_data_source                   String?
+  fdc_modified_date                 DateTime?
+  fdc_available_date                DateTime?
+  nutrient_count                    Int?
+  in_elasticsearch                  Boolean          @default(false)
   food_nutrients                    FoodNutrient[]
   portions                          Portion[]
 
   @@index([description])
+  @@index([gtin_upc])
 }
 
 model Portion {
-  id              Int      @id @default(autoincrement())
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
-  food            Food     @relation(fields: [food_id], references: [id])
-  food_id         Int
-  sequence_number Int      @default(1)
-  measure         String
-  gram_weight     Float
+  id                  Int      @id @default(autoincrement())
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+  food                Food     @relation(fields: [food_id], references: [id])
+  food_id             Int
+  sequence_number     Int      @default(1)
+  measure_unit        String
+  portion_description String?
+  modifier            String?
+  gram_weight         Float
+  amount              Float
 
   @@index([food_id])
 }
 
 model Nutrient {
-  id             Int            @id @default(autoincrement())
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
-  name           String
-  unit           NutrientUnit
-  food_nutrients FoodNutrient[]
+  id              Int            @id @default(autoincrement())
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+  name            String
+  nutrient_number Int
+  unit            NutrientUnit
+  food_nutrients  FoodNutrient[]
 }
 
 model FoodNutrient {
@@ -89,4 +103,8 @@ enum NutrientUnit {
   UG
   IU
   MG_ATE
+  PH
+  MCG_RE
+  UMOL_TE
+  MG_GAE
 }
