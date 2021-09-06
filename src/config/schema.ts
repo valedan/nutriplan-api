@@ -1,6 +1,6 @@
-import { makeSchema } from "nexus";
-import { join } from "path";
-import * as types from "../api";
+import { makeSchema, fieldAuthorizePlugin } from "nexus"
+import { join } from "path"
+import * as types from "../api"
 
 export default makeSchema({
   types,
@@ -9,7 +9,8 @@ export default makeSchema({
     schema: join(__dirname, "schema.graphql"),
   },
   contextType: {
-    module: join(__dirname, "./context.ts"),
-    export: "Context",
+    module: join(__dirname, "context.ts"),
+    export: "MyContext",
   },
-});
+  plugins: [fieldAuthorizePlugin()],
+})

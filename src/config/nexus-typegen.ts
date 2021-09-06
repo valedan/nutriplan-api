@@ -4,7 +4,8 @@
  */
 
 
-import type { Context } from "./context"
+import type { MyContext } from "./context"
+import type { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
 
 
 
@@ -29,7 +30,7 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   Food: { // root type
-    brand?: string | null; // String
+    brand_name?: string | null; // String
     category?: string | null; // String
     data_source?: string | null; // String
     description?: string | null; // String
@@ -70,7 +71,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
   Food: { // field return type
-    brand: string | null; // String
+    brand_name: string | null; // String
     category: string | null; // String
     data_source: string | null; // String
     description: string | null; // String
@@ -104,7 +105,7 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   Food: { // field return type name
-    brand: 'String'
+    brand_name: 'String'
     category: 'String'
     data_source: 'String'
     description: 'String'
@@ -178,7 +179,7 @@ export type NexusGenFeaturesConfig = {
 }
 
 export interface NexusGenTypes {
-  context: Context;
+  context: MyContext;
   inputTypes: NexusGenInputs;
   rootTypes: NexusGenRootTypes;
   inputTypeShapes: NexusGenInputs & NexusGenEnums & NexusGenScalars;
@@ -210,6 +211,15 @@ declare global {
   interface NexusGenPluginInputTypeConfig<TypeName extends string> {
   }
   interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
+    /**
+     * Authorization for an individual field. Returning "true"
+     * or "Promise<true>" means the field can be accessed.
+     * Returning "false" or "Promise<false>" will respond
+     * with a "Not Authorized" error for the field.
+     * Returning or throwing an error will also prevent the
+     * resolver from executing.
+     */
+    authorize?: FieldAuthorizeResolver<TypeName, FieldName>
   }
   interface NexusGenPluginInputFieldConfig<TypeName extends string, FieldName extends string> {
   }
