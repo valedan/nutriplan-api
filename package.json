@@ -7,13 +7,14 @@
   },
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsc && node ./dist/src/config/index.js",
+    "start": "node ./dist/src/config/index.js",
     "dev": "ts-node-dev -r dotenv/config --transpile-only --no-notify ./src/config/index.ts dotenv_config_path=./.env.development ",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker compose down",
     "test": "DATABASE_URL=postgresql://dan:nutriplan@localhost:5433/tests npm run docker:up && jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,cjs",
     "build": "tsc",
+    "postinstall": "tsc",
     "script": "ts-node -r dotenv/config --transpile-only dotenv_config_path=./.env.development "
   },
   "keywords": [],
