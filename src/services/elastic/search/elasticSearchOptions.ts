@@ -4,11 +4,16 @@ export default {
   precision: 4,
   search_fields: {
     description: {},
-    brand: {},
+    brand_name: {},
     additional_descriptions: {},
   },
   filters: {
-    data_source: ["usda_sr_legacy_food", "usda_foundation_food", "usda_survey_fndds_food", "usda_branded_food"],
+    data_source: [
+      "usda_sr_legacy_food",
+      "usda_foundation_food",
+      "usda_survey_fndds_food",
+      "usda_branded_food",
+    ],
   },
   boosts: {
     data_source: [
@@ -46,7 +51,11 @@ export default {
       },
       {
         type: "value",
-        value: ["Baby food: vegetable", "Baby food: meat and dinners", "Baby juice"],
+        value: [
+          "Baby food: vegetable",
+          "Baby food: meat and dinners",
+          "Baby juice",
+        ],
         operation: "multiply",
         factor: 0.5,
       },
@@ -64,7 +73,13 @@ export default {
       },
       {
         type: "value",
-        value: ["Baked Products", "Sweets", "Snacks", "Biscuits, muffins, quick breads", "Chips, Pretzels & Snacks"],
+        value: [
+          "Baked Products",
+          "Sweets",
+          "Snacks",
+          "Biscuits, muffins, quick breads",
+          "Chips, Pretzels & Snacks",
+        ],
         operation: "multiply",
         factor: 0.5,
       },
@@ -88,4 +103,4 @@ export default {
       },
     ],
   },
-};
+}
