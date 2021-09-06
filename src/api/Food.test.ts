@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { gql } from "graphql-request";
-import { Food } from "@prisma/client";
-import { createTestContext } from "../../tests/__helpers";
+import { gql } from "graphql-request"
+import { Food } from "@prisma/client"
+import db from "../config/db"
 
-const ctx = createTestContext();
+import createTestServer from "../../tests/__helpers"
 
-let pizza: Food;
+const server = createTestServer()
+
+let pizza: Food
 
 beforeAll(async () => {
-  pizza = await ctx.db.food.create({ data: { description: "pizza", data_source: "test" } });
-});
+  pizza = await db.food.create({
+    data: { description: "pizza", data_source: "test" },
+  })
+})
 
 it("returns the requested food", async () => {
   const query = gql`
@@ -19,19 +23,32 @@ it("returns the requested food", async () => {
         description
       }
     }
-  `;
-
-  const result = await ctx.client.request(query, { id: pizza.id });
+  `
+  const result = await server.executeOperation({
+    query,
+    variables: { id: pizza.id },
+  })
 
   expect(result).toMatchInlineSnapshot(
-    { food: { id: expect.any(Number) } },
+    {
+      data: { food: { id: expect.any(Number) } },
+    },
     `
 Object {
-  "food": Object {
-    "description": "pizza",
-    "id": Any<Number>,
+  "data": Object {
+    "food": Object {
+      "description": "pizza",
+      "id": Any<Number>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
   },
 }
 `
-  );
-});
+  )
+})

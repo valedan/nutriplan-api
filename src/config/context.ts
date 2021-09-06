@@ -18,6 +18,7 @@ export const context = async ({
 }: ExpressContext): Promise<MyContext> => {
   let isAuthenticated = false
   const user: User = { id: "" }
+  console.log(req)
   const authHeader = req.headers?.authorization || ""
 
   if (authHeader) {
