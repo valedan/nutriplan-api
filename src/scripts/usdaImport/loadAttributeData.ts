@@ -29,14 +29,14 @@ const loadAttributeData = async (prisma: PrismaClient): Promise<void> => {
     const updateData: Partial<Food> = {}
 
     if (typedRow.food_attribute_type_id === "1000") {
-      updateData.common_names = typedRow.value.toString()
+      updateData.commonNames = typedRow.value.toString()
     }
 
     if (typedRow.food_attribute_type_id === "1001") {
-      if (updateData.additional_descriptions) {
-        updateData.additional_descriptions.push(typedRow.value.toString())
+      if (updateData.additionalDescriptions) {
+        updateData.additionalDescriptions.push(typedRow.value.toString())
       } else {
-        updateData.additional_descriptions = [typedRow.value.toString()]
+        updateData.additionalDescriptions = [typedRow.value.toString()]
       }
     }
 

@@ -18,7 +18,6 @@ export const context = async ({
 }: ExpressContext): Promise<MyContext> => {
   let isAuthenticated = false
   const user: User = { id: "" }
-  console.log(req)
   const authHeader = req.headers?.authorization || ""
 
   if (authHeader) {
@@ -32,7 +31,7 @@ export const context = async ({
 
   if (!isAuthenticated) {
     // Remove this and do per-field auth with Nexus `authorize` if I ever need some public portions of api
-    throw new AuthenticationError("Not authenticated")
+    // throw new AuthenticationError("Not authenticated")
   }
 
   return {

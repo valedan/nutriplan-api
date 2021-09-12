@@ -2,38 +2,93 @@
 ### Do not make changes to this file directly
 
 
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
 type Food {
-  brand_name: String
+  brandName: String
   category: String
-  data_source: String
+  dataSource: String!
   description: String
-  food_nutrients: [FoodNutrient]
-  id: Int
-  ingredients: String
-  portions: [Portion]
+  id: Int!
+  nutrients: [FoodNutrient!]!
+  portions: [Portion!]!
   searchScore: Float
-  serving_size: Float
+  servingSize: ServingSize
 }
 
 type FoodNutrient {
-  amount: Float
-  id: Int
-  nutrient: Nutrient
+  amount: Float!
+  id: Int!
+  name: String!
+  unit: String!
 }
 
-type Nutrient {
-  id: Int
+type Ingredient {
+  amount: Float!
+  food: Food
+  id: Int!
+  measure: String!
+  order: Int
+}
+
+type Meal {
+  id: Int!
+  ingredients: [Ingredient!]!
+  order: Int
+  recipe: Recipe
+  servings: Int!
+}
+
+type Plan {
+  endDate: DateTime
+  id: Int!
+  ingredients: [Ingredient!]!
+  meals: [Meal!]!
   name: String
+  startDate: DateTime
 }
 
 type Portion {
-  gram_weight: Float
-  id: Int
+  description: String
+  gramWeight: Float!
   measure: String
-  sequence_number: Int
+  order: Int
+  unit: String
 }
 
 type Query {
   food(id: Int!): Food
+  foods(ids: [Int!]!): [Food!]!
+  plan(id: Int!): Plan
+  plans(ids: [Int!]!): [Plan!]!
+  recipe(id: Int!): Recipe
+  recipes(ids: [Int!]!): [Recipe!]!
   searchFoods(searchTerm: String!): [Food]
+}
+
+type Recipe {
+  id: Int!
+  ingredients: [Ingredient!]!
+  meals: [Meal!]!
+  name: String
+  servings: Int
+}
+
+type ServingSize {
+  amount: Float!
+  description: String!
+  unit: ServingSizeUnit!
+}
+
+enum ServingSizeUnit {
+  g
+  ml
 }

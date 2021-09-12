@@ -14,28 +14,29 @@ queue.on("next", () => {
 })
 
 type DuplicateQueryResult = {
-  gtin_upc: string
+  gtinUpc: string
   count: number
 }
 
-// Find all gtin_upcs that have duplicates
-// For each gtin_upc, find all foods with that gtin_upc
+// Find all gtinUpcs that have duplicates
+// For each gtinUpc, find all foods with that gtinUpc
 // For each food, set historical to true, except the one with the highest id
 const flagHistoricalRecords = async (prisma: PrismaClient): Promise<void> => {
+  // TODO: Update to handle camelCase properly?
   const results = await prisma.$queryRaw<DuplicateQueryResult[]>`
-  SELECT gtin_upc, COUNT(*)
+  SELECT gtinUpc, COUNT(*)
   FROM "public"."Food" food
-  WHERE gtin_upc IS NOT NULL
-  GROUP BY gtin_upc
+  WHERE gtinUpc IS NOT NULL
+  GROUP BY gtinUpc
   HAVING COUNT(*) > 1
   `
 
-  const duplicateGtinIds = results.map((result) => result.gtin_upc)
+  const duplicateGtinIds = results.map((result) => result.gtinUpc)
 
   duplicateGtinIds.forEach((gtinId) => {
     void queue.add(async () => {
       const foods = await prisma.food.findMany({
-        where: { gtin_upc: gtinId },
+        where: { gtinUpc: gtinId },
         orderBy: { id: "desc" },
       })
 

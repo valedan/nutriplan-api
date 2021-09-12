@@ -11,7 +11,7 @@ let pizza: Food
 
 beforeAll(async () => {
   pizza = await db.food.create({
-    data: { description: "pizza", data_source: "test" },
+    data: { description: "pizza", dataSource: "test" },
   })
 })
 
