@@ -87,10 +87,11 @@ export const Food = objectType({
     t.field("nutrients", {
       type: nonNull(list(nonNull("FoodNutrient"))),
       resolve: async ({ id }, _args, ctx) => {
-        const foodNutrients = await ctx.db.foodNutrient.findMany({
-          where: { foodId: Number(id) },
-          include: { nutrient: true },
-        })
+        const foodNutrients = await ctx.db.food
+          .findUnique({
+            where: { id },
+          })
+          .foodNutrients({ include: { nutrient: true } })
 
         return foodNutrients.map((foodNutrient) => ({
           ...foodNutrient.nutrient,

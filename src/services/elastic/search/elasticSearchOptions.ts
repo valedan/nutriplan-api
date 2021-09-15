@@ -5,6 +5,7 @@ export default {
   search_fields: {
     description: {},
     brand_name: {},
+    brand_owner: {},
     additional_descriptions: {},
   },
   filters: {

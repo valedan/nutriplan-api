@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { GraphQLResponse } from "apollo-server-types"
 import { gql } from "graphql-request"
+import { mocked } from "ts-jest/utils"
 import { Food, Nutrient, FoodNutrient, Portion } from "@prisma/client"
 import { NexusGenFieldTypes } from "../config/nexus-typegen"
-
+import ElasticClient from "../services/elastic/client"
 import createTestServer from "../../tests/__helpers"
 import {
   createFoodNutrient,
@@ -11,6 +12,9 @@ import {
   createNutrients,
   createPortions,
 } from "../../tests/factories"
+
+jest.mock("../services/elastic/client")
+const mockedElastic = mocked(ElasticClient, true)
 
 const server = createTestServer()
 
@@ -46,21 +50,21 @@ const getFoodsQuery = gql`
   }
 `
 
-// const searchFoodsQuery = gql`
-//   query searchFoods($ids: [Int!]!) {
-//     foods(ids: $ids) {
-//       id
-//       description
-//       nutrients {
-//         id
-//         amount
-//       }
-//       portions {
-//         gramWeight
-//       }
-//     }
-//   }
-// `
+const searchFoodsQuery = gql`
+  query ($searchTerm: String!) {
+    searchFoods(searchTerm: $searchTerm) {
+      id
+      description
+      nutrients {
+        id
+        amount
+      }
+      portions {
+        gramWeight
+      }
+    }
+  }
+`
 
 let foods: Food[] = []
 let nutrients: Nutrient[] = []
@@ -154,16 +158,34 @@ describe("Querying multiple foods", () => {
   })
 })
 
-// describe("Searching for foods", () => {
-//   it("returns foods matching the search term", asynx () => {
-//     const result: GraphQLResponse & {
-//       data?: { foods?: NexusGenFieldTypes["Food"][] } | null | undefined
-//     } = await server.executeOperation({
-//       query: searchFoodsQuery,
-//       variables: { searchTerm: "kale" },
-//     })
+describe("Searching for foods", () => {
+  it("returns foods matching the search term", async () => {
+    mockedElastic.search.mockResolvedValue({
+      results: [
+        { id: { raw: foods[0].id.toString() }, _meta: { score: 0 } },
+        { id: { raw: foods[1].id.toString() }, _meta: { score: 0 } },
+      ],
+    })
 
-//     expect(result.errors).toBeUndefined()
+    const result: GraphQLResponse & {
+      data?: { searchFoods?: NexusGenFieldTypes["Food"][] } | null | undefined
+    } = await server.executeOperation({
+      query: searchFoodsQuery,
+      variables: { searchTerm: "test" },
+    })
 
-//   })
-// })
+    console.log(result)
+
+    expect(result.errors).toBeUndefined()
+    expect(result.data?.searchFoods).toHaveLength(2)
+
+    expect(result.data?.searchFoods?.map(({ id }) => id)).toIncludeSameMembers(
+      foods.map(({ id }) => id)
+    )
+    expect(
+      result.data?.searchFoods
+        ?.find(({ id }) => id === foods[0].id)
+        ?.nutrients.map(({ id }) => id)
+    ).toIncludeSameMembers(nutrients.map(({ id }) => id))
+  })
+})
