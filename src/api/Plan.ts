@@ -1,6 +1,12 @@
 /* eslint-disable import/prefer-default-export */
 import { objectType, nonNull, intArg, list, queryField } from "nexus"
 
+export const PlanQuery = queryField("plan", {
+  type: "Plan",
+  args: { id: nonNull(intArg()) },
+  resolve: (_root, { id }, ctx) => ctx.db.plan.findUnique({ where: { id } }),
+})
+
 export const PlansQuery = queryField("plans", {
   type: nonNull(list(nonNull("Plan"))),
   args: {
@@ -8,12 +14,6 @@ export const PlansQuery = queryField("plans", {
   },
   resolve: (_root, { ids }, ctx) =>
     ctx.db.plan.findMany({ where: { id: { in: ids } } }),
-})
-
-export const PlanQuery = queryField("plan", {
-  type: "Plan",
-  args: { id: nonNull(intArg()) },
-  resolve: (_root, { id }, ctx) => ctx.db.plan.findUnique({ where: { id } }),
 })
 
 export const Plan = objectType({

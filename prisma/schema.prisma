@@ -130,6 +130,7 @@ model Recipe {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  userId   String
   name     String
   servings Int
 

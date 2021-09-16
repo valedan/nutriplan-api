@@ -174,8 +174,6 @@ describe("Searching for foods", () => {
       variables: { searchTerm: "test" },
     })
 
-    console.log(result)
-
     expect(result.errors).toBeUndefined()
     expect(result.data?.searchFoods).toHaveLength(2)
 
