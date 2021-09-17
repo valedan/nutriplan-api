@@ -43,6 +43,7 @@ type Meal {
   id: Int!
   ingredients: [Ingredient!]!
   order: Int
+  plan: Plan
   recipe: Recipe
   servings: Int!
 }

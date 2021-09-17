@@ -145,6 +145,7 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     ingredients: NexusGenRootTypes['Ingredient'][]; // [Ingredient!]!
     order: number | null; // Int
+    plan: NexusGenRootTypes['Plan'] | null; // Plan
     recipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     servings: number; // Int!
   }
@@ -215,6 +216,7 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     ingredients: 'Ingredient'
     order: 'Int'
+    plan: 'Plan'
     recipe: 'Recipe'
     servings: 'Int'
   }

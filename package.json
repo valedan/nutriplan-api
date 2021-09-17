@@ -6,6 +6,9 @@
     "node": "16.x"
   },
   "main": "src/index.ts",
+  "prisma": {
+    "seed": "ts-node -r dotenv/config --transpile-only ./prisma/seed.ts dotenv_config_path=./.env.development"
+  },
   "scripts": {
     "start": "node ./dist/src/config/index.js",
     "dev": "ts-node-dev -r dotenv/config --transpile-only --no-notify ./src/config/index.ts dotenv_config_path=./.env.development ",

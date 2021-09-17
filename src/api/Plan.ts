@@ -56,5 +56,11 @@ export const Meal = objectType({
       resolve: ({ id }, _args, ctx) =>
         ctx.db.meal.findUnique({ where: { id } }).recipe(),
     })
+
+    t.field("plan", {
+      type: "Plan",
+      resolve: ({ id }, _args, ctx) =>
+        ctx.db.meal.findUnique({ where: { id } }).plan(),
+    })
   },
 })
