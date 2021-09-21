@@ -17,7 +17,7 @@ import db from "../config/db"
 
 jest.mock("../services/elastic/client")
 
-const server = createTestServer({ userId: "test_user" })
+const server = createTestServer({ userId: "plan_user" })
 
 type GraphQLIngredient = NexusGenFieldTypes["Ingredient"] & {
   food: NexusGenFieldTypes["Food"]
@@ -38,12 +38,12 @@ beforeAll(async () => {
     { foodId: foods[0].id },
   ])
   plan = await createPlan({
-    userId: "test_user",
+    userId: "plan_user",
     name: "Test Plan",
     startDate: subDays(new Date(), 3),
     endDate: addDays(new Date(), 3),
   })
-  plan2 = await createPlan({ userId: "test_user" })
+  plan2 = await createPlan({ userId: "plan_user" })
   otherPlan = await createPlan({ userId: "other_user" })
   recipe = await createRecipe()
 

@@ -2,6 +2,12 @@
 ### Do not make changes to this file directly
 
 
+input AddIngredientInput {
+  foodId: Int!
+  planId: Int
+  recipeId: Int
+}
+
 input CreatePlanInput {
   endDate: DateTime!
   name: String!
@@ -55,8 +61,10 @@ type Meal {
 }
 
 type Mutation {
+  addIngredient(input: AddIngredientInput!): Ingredient
   createPlan(input: CreatePlanInput!): Plan
   deletePlan(id: Int!): Plan
+  removeIngredient(id: Int!): Ingredient
   updatePlan(input: UpdatePlanInput!): Plan
 }
 

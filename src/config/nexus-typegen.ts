@@ -38,6 +38,11 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  AddIngredientInput: { // input type
+    foodId: number; // Int!
+    planId?: number | null; // Int
+    recipeId?: number | null; // Int
+  }
   CreatePlanInput: { // input type
     endDate: NexusGenScalars['DateTime']; // DateTime!
     name: string; // String!
@@ -162,8 +167,10 @@ export interface NexusGenFieldTypes {
     servings: number; // Int!
   }
   Mutation: { // field return type
+    addIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     createPlan: NexusGenRootTypes['Plan'] | null; // Plan
     deletePlan: NexusGenRootTypes['Plan'] | null; // Plan
+    removeIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     updatePlan: NexusGenRootTypes['Plan'] | null; // Plan
   }
   Plan: { // field return type
@@ -238,8 +245,10 @@ export interface NexusGenFieldTypeNames {
     servings: 'Int'
   }
   Mutation: { // field return type name
+    addIngredient: 'Ingredient'
     createPlan: 'Plan'
     deletePlan: 'Plan'
+    removeIngredient: 'Ingredient'
     updatePlan: 'Plan'
   }
   Plan: { // field return type name
@@ -282,10 +291,16 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    addIngredient: { // args
+      input: NexusGenInputs['AddIngredientInput']; // AddIngredientInput!
+    }
     createPlan: { // args
       input: NexusGenInputs['CreatePlanInput']; // CreatePlanInput!
     }
     deletePlan: { // args
+      id: number; // Int!
+    }
+    removeIngredient: { // args
       id: number; // Int!
     }
     updatePlan: { // args
