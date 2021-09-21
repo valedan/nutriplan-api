@@ -2,6 +2,12 @@
 ### Do not make changes to this file directly
 
 
+input CreatePlanInput {
+  endDate: DateTime!
+  name: String!
+  startDate: DateTime!
+}
+
 """
 A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -48,6 +54,12 @@ type Meal {
   servings: Int!
 }
 
+type Mutation {
+  createPlan(input: CreatePlanInput!): Plan
+  deletePlan(id: Int!): Plan
+  updatePlan(input: UpdatePlanInput!): Plan
+}
+
 type Plan {
   endDate: DateTime
   id: Int!
@@ -69,7 +81,7 @@ type Query {
   food(id: Int!): Food
   foods(ids: [Int!]!): [Food!]!
   plan(id: Int!): Plan
-  plans(ids: [Int!]!): [Plan!]!
+  plans: [Plan!]!
   recipe(id: Int!): Recipe
   recipes(ids: [Int!]!): [Recipe!]!
   searchFoods(searchTerm: String!): [Food]
@@ -92,4 +104,11 @@ type ServingSize {
 enum ServingSizeUnit {
   g
   ml
+}
+
+input UpdatePlanInput {
+  endDate: DateTime
+  id: Int!
+  name: String
+  startDate: DateTime
 }

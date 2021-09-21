@@ -38,6 +38,17 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CreatePlanInput: { // input type
+    endDate: NexusGenScalars['DateTime']; // DateTime!
+    name: string; // String!
+    startDate: NexusGenScalars['DateTime']; // DateTime!
+  }
+  UpdatePlanInput: { // input type
+    endDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    name?: string | null; // String
+    startDate?: NexusGenScalars['DateTime'] | null; // DateTime
+  }
 }
 
 export interface NexusGenEnums {
@@ -80,6 +91,7 @@ export interface NexusGenObjects {
     order?: number | null; // Int
     servings: number; // Int!
   }
+  Mutation: {};
   Plan: { // root type
     endDate?: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
@@ -148,6 +160,11 @@ export interface NexusGenFieldTypes {
     plan: NexusGenRootTypes['Plan'] | null; // Plan
     recipe: NexusGenRootTypes['Recipe'] | null; // Recipe
     servings: number; // Int!
+  }
+  Mutation: { // field return type
+    createPlan: NexusGenRootTypes['Plan'] | null; // Plan
+    deletePlan: NexusGenRootTypes['Plan'] | null; // Plan
+    updatePlan: NexusGenRootTypes['Plan'] | null; // Plan
   }
   Plan: { // field return type
     endDate: NexusGenScalars['DateTime'] | null; // DateTime
@@ -220,6 +237,11 @@ export interface NexusGenFieldTypeNames {
     recipe: 'Recipe'
     servings: 'Int'
   }
+  Mutation: { // field return type name
+    createPlan: 'Plan'
+    deletePlan: 'Plan'
+    updatePlan: 'Plan'
+  }
   Plan: { // field return type name
     endDate: 'DateTime'
     id: 'Int'
@@ -259,6 +281,17 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    createPlan: { // args
+      input: NexusGenInputs['CreatePlanInput']; // CreatePlanInput!
+    }
+    deletePlan: { // args
+      id: number; // Int!
+    }
+    updatePlan: { // args
+      input: NexusGenInputs['UpdatePlanInput']; // UpdatePlanInput!
+    }
+  }
   Query: {
     food: { // args
       id: number; // Int!
@@ -268,9 +301,6 @@ export interface NexusGenArgTypes {
     }
     plan: { // args
       id: number; // Int!
-    }
-    plans: { // args
-      ids: number[]; // [Int!]!
     }
     recipe: { // args
       id: number; // Int!
@@ -292,7 +322,7 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
 export type NexusGenEnumNames = keyof NexusGenEnums;
 

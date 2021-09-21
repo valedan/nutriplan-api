@@ -1,10 +1,19 @@
 import { ApolloServer } from "apollo-server"
 import db from "../src/config/db"
 import schema from "../src/config/schema"
+import { MyContext } from "../src/config/context"
 
 // eslint-disable-next-line import/prefer-default-export
-const createTestServer = (): ApolloServer => {
-  const ctx = { db }
+
+interface TestServerOptions {
+  userId?: string
+}
+
+const createTestServer = ({ userId }: TestServerOptions): ApolloServer => {
+  const ctx: Partial<MyContext> = { db }
+  if (userId) {
+    ctx.auth = { isAuthenticated: true, user: { id: userId } }
+  }
   const server = new ApolloServer({
     schema,
     context: () => ctx,

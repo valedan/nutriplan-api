@@ -8,7 +8,28 @@ import {
   enumType,
   queryField,
 } from "nexus"
-import { searchFoods } from "../services/elastic/search"
+import { searchFoods as searchFoodsService } from "../services/elastic/search"
+
+export const getFood = queryField("food", {
+  type: "Food",
+  args: { id: nonNull(intArg()) },
+  resolve: (_root, { id }, ctx) => ctx.db.food.findUnique({ where: { id } }),
+})
+
+export const getFoods = queryField("foods", {
+  type: nonNull(list(nonNull("Food"))),
+  args: {
+    ids: nonNull(list(nonNull(intArg()))),
+  },
+  resolve: (_root, { ids }, ctx) =>
+    ctx.db.food.findMany({ where: { id: { in: ids } } }),
+})
+
+export const searchFoods = queryField("searchFoods", {
+  type: list("Food"),
+  args: { searchTerm: nonNull(stringArg()) },
+  resolve: (_root, { searchTerm }) => searchFoodsService(searchTerm),
+})
 
 export const ServingSizeUnit = enumType({
   name: "ServingSizeUnit",
@@ -22,27 +43,6 @@ export const ServingSize = objectType({
     t.nonNull.string("description")
     t.nonNull.field("unit", { type: nonNull(ServingSizeUnit) })
   },
-})
-
-export const FoodQuery = queryField("food", {
-  type: "Food",
-  args: { id: nonNull(intArg()) },
-  resolve: (_root, { id }, ctx) => ctx.db.food.findUnique({ where: { id } }),
-})
-
-export const FoodsQuery = queryField("foods", {
-  type: nonNull(list(nonNull("Food"))),
-  args: {
-    ids: nonNull(list(nonNull(intArg()))),
-  },
-  resolve: (_root, { ids }, ctx) =>
-    ctx.db.food.findMany({ where: { id: { in: ids } } }),
-})
-
-export const SearchFoodsQuery = queryField("searchFoods", {
-  type: list("Food"),
-  args: { searchTerm: nonNull(stringArg()) },
-  resolve: (_root, { searchTerm }) => searchFoods(searchTerm),
 })
 
 export const Food = objectType({

@@ -1,4 +1,4 @@
-import { AuthenticationError, ExpressContext } from "apollo-server-express"
+import { ExpressContext } from "apollo-server-express"
 import { PrismaClient } from "@prisma/client"
 import verifyToken from "../services/auth/verifyToken"
 import { User } from "../types/User"

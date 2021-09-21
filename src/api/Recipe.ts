@@ -1,19 +1,19 @@
 /* eslint-disable import/prefer-default-export */
 import { objectType, nonNull, intArg, list, queryField } from "nexus"
 
-export const RecipesQuery = queryField("recipes", {
+export const getRecipe = queryField("recipe", {
+  type: "Recipe",
+  args: { id: nonNull(intArg()) },
+  resolve: (_root, { id }, ctx) => ctx.db.recipe.findUnique({ where: { id } }),
+})
+
+export const getRecipes = queryField("recipes", {
   type: nonNull(list(nonNull("Recipe"))),
   args: {
     ids: nonNull(list(nonNull(intArg()))),
   },
   resolve: (_root, { ids }, ctx) =>
     ctx.db.recipe.findMany({ where: { id: { in: ids } } }),
-})
-
-export const RecipeQuery = queryField("recipe", {
-  type: "Recipe",
-  args: { id: nonNull(intArg()) },
-  resolve: (_root, { id }, ctx) => ctx.db.recipe.findUnique({ where: { id } }),
 })
 
 export const Recipe = objectType({
@@ -36,3 +36,11 @@ export const Recipe = objectType({
     })
   },
 })
+
+// just scalar fields
+// createRecipe
+
+// just scalar fields
+// updateRecipe
+
+// deleteRecipe

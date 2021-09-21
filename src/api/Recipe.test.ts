@@ -106,3 +106,6 @@ describe("Querying a single recipe", () => {
     expect(result.data?.recipe).toBeNull()
   })
 })
+
+// TODO
+describe("Querying multiple recipes", () => {})
