@@ -331,17 +331,287 @@ describe("Removing an ingredient", () => {
 })
 
 describe("Updating an ingredient", () => {
-  it("Updates the ingredient", async () => {})
-  it("returns an error when ingredient doesn't exist", async () => {})
-  it("returns an error when ingredient belongs to another user", async () => {})
+  const updateIngredientMutation = gql`
+    mutation updateIngredient($input: UpdateIngredientInput!) {
+      updateIngredient(input: $input) {
+        id
+        amount
+        measure
+        order
+      }
+    }
+  `
+
+  type UpdateIngredientResponse = GraphQLResponse & {
+    data?:
+      | { updateIngredient?: NexusGenFieldTypes["Ingredient"] }
+      | null
+      | undefined
+  }
+
+  it("Updates the ingredient", async () => {
+    const result: UpdateIngredientResponse = await server.executeOperation({
+      query: updateIngredientMutation,
+      variables: {
+        // TODO: check measure updating once portions are figured out
+        input: { id: planIngredients[0].id, amount: 420 },
+      },
+    })
+
+    expect(result.errors).toBeUndefined()
+    expect(result.data?.updateIngredient?.amount).toEqual(420)
+
+    const savedIngredient = await db.ingredient.findUnique({
+      where: { id: planIngredients[0].id },
+    })
+    expect(savedIngredient?.amount).toEqual(420)
+  })
+
+  it("returns an error when ingredient doesn't exist", async () => {
+    const result: UpdateIngredientResponse = await server.executeOperation({
+      query: updateIngredientMutation,
+      variables: {
+        input: { id: 243223, amount: 123 },
+      },
+    })
+
+    expect(result.errors).toBeDefined()
+    expect(result.data?.updateIngredient).toBeNull()
+  })
+
+  it("returns an error when ingredient belongs to another user", async () => {
+    const result: UpdateIngredientResponse = await server.executeOperation({
+      query: updateIngredientMutation,
+      variables: {
+        input: { id: otherPlanIngredient.id, amount: 123 },
+      },
+    })
+
+    expect(result.errors).toBeDefined()
+    expect(result.data?.updateIngredient).toBeNull()
+  })
 })
 
 describe("Reordering ingredients", () => {
-  it("Re-orders a single ingredient", async () => {})
-  it("Re-orders multiple ingredients", async () => {})
-  it("returns an error when ingredient doesn't exist", async () => {})
-  it("returns an error when ingredient belongs to another user", async () => {})
-  it("returns an error when ingredients belong to different parents", async () => {})
+  let planForReordering: Plan
+  let recipeForReordering: Recipe
+  let recipeIngredient: Ingredient
+  const ingredients: Ingredient[] = []
+
+  beforeAll(async () => {
+    planForReordering = await createPlan({
+      userId: "ingredient_user",
+    })
+
+    recipeForReordering = await createRecipe({
+      userId: "ingredient_user",
+    })
+
+    recipeIngredient = await createIngredient({
+      recipeId: recipeForReordering.id,
+      foodId: foods[0].id,
+      order: 0,
+    })
+
+    ingredients.push(
+      await createIngredient({
+        planId: planForReordering.id,
+        foodId: foods[0].id,
+        order: 0,
+      })
+    )
+
+    ingredients.push(
+      await createIngredient({
+        planId: planForReordering.id,
+        foodId: foods[1].id,
+        order: 1,
+      })
+    )
+
+    ingredients.push(
+      await createIngredient({
+        planId: planForReordering.id,
+        foodId: foods[2].id,
+        order: 2,
+      })
+    )
+  })
+
+  beforeEach(async () => {
+    await db.ingredient.update({
+      where: { id: ingredients[0].id },
+      data: { order: 0 },
+    })
+
+    await db.ingredient.update({
+      where: { id: ingredients[1].id },
+      data: { order: 1 },
+    })
+
+    await db.ingredient.update({
+      where: { id: ingredients[2].id },
+      data: { order: 2 },
+    })
+  })
+
+  const reorderIngredientsMutation = gql`
+    mutation reorderIngredients($input: ReorderIngredientsInput!) {
+      reorderIngredients(input: $input) {
+        id
+        order
+        amount
+      }
+    }
+  `
+
+  type ReorderIngredientsResponse = GraphQLResponse & {
+    data?:
+      | { reorderIngredients?: NexusGenFieldTypes["Ingredient"][] }
+      | null
+      | undefined
+  }
+
+  it("Re-orders a single ingredient", async () => {
+    const result: ReorderIngredientsResponse = await server.executeOperation({
+      query: reorderIngredientsMutation,
+      variables: {
+        input: {
+          parentType: "plan",
+          parentId: planForReordering.id,
+          reorders: [{ id: ingredients[0].id, newOrder: 2 }],
+        },
+      },
+    })
+
+    expect(result.errors).toBeUndefined()
+    expect(
+      result.data?.reorderIngredients?.map(({ id, order }) => ({ id, order }))
+    ).toIncludeSameMembers([
+      { id: ingredients[1].id, order: 0 },
+      { id: ingredients[2].id, order: 1 },
+      { id: ingredients[0].id, order: 2 },
+    ])
+
+    expect(
+      (
+        await db.plan
+          .findUnique({ where: { id: planForReordering.id } })
+          ?.ingredients()
+      )?.map(({ id, order }) => ({ id, order }))
+    ).toIncludeSameMembers([
+      { id: ingredients[1].id, order: 0 },
+      { id: ingredients[2].id, order: 1 },
+      { id: ingredients[0].id, order: 2 },
+    ])
+  })
+
+  it("Re-orders multiple ingredients", async () => {
+    const result: ReorderIngredientsResponse = await server.executeOperation({
+      query: reorderIngredientsMutation,
+      variables: {
+        input: {
+          parentType: "plan",
+          parentId: planForReordering.id,
+          reorders: [
+            { id: ingredients[2].id, newOrder: 0 },
+            { id: ingredients[0].id, newOrder: 1 },
+            { id: ingredients[1].id, newOrder: 2 },
+          ],
+        },
+      },
+    })
+
+    expect(result.errors).toBeUndefined()
+    expect(
+      result.data?.reorderIngredients?.map(({ id, order }) => ({ id, order }))
+    ).toIncludeSameMembers([
+      { id: ingredients[2].id, order: 0 },
+      { id: ingredients[0].id, order: 1 },
+      { id: ingredients[1].id, order: 2 },
+    ])
+
+    expect(
+      (
+        await db.plan
+          .findUnique({ where: { id: planForReordering.id } })
+          ?.ingredients()
+      )?.map(({ id, order }) => ({ id, order }))
+    ).toIncludeSameMembers([
+      { id: ingredients[2].id, order: 0 },
+      { id: ingredients[0].id, order: 1 },
+      { id: ingredients[1].id, order: 2 },
+    ])
+  })
+
+  it("Preserves order contiguity", async () => {
+    const result: ReorderIngredientsResponse = await server.executeOperation({
+      query: reorderIngredientsMutation,
+      variables: {
+        input: {
+          parentType: "plan",
+          parentId: planForReordering.id,
+          reorders: [{ id: ingredients[0].id, newOrder: 100 }],
+        },
+      },
+    })
+
+    expect(result.errors).toBeUndefined()
+    expect(
+      result.data?.reorderIngredients?.map(({ id, order }) => ({ id, order }))
+    ).toIncludeSameMembers([
+      { id: ingredients[1].id, order: 0 },
+      { id: ingredients[2].id, order: 1 },
+      { id: ingredients[0].id, order: 2 },
+    ])
+
+    expect(
+      (
+        await db.plan
+          .findUnique({ where: { id: planForReordering.id } })
+          ?.ingredients()
+      )?.map(({ id, order }) => ({ id, order }))
+    ).toIncludeSameMembers([
+      { id: ingredients[1].id, order: 0 },
+      { id: ingredients[2].id, order: 1 },
+      { id: ingredients[0].id, order: 2 },
+    ])
+  })
+
+  it("returns an error when plan belongs to another user", async () => {
+    const result: ReorderIngredientsResponse = await server.executeOperation({
+      query: reorderIngredientsMutation,
+      variables: {
+        input: {
+          parentType: "plan",
+          parentId: otherPlan.id,
+          reorders: [{ id: otherPlanIngredient.id, newOrder: 1 }],
+        },
+      },
+    })
+
+    expect(result.errors).toBeDefined()
+    expect(result.data?.reorderIngredients).toBeNull()
+  })
+
+  it("returns an error when ingredients belong to different parents", async () => {
+    const result: ReorderIngredientsResponse = await server.executeOperation({
+      query: reorderIngredientsMutation,
+      variables: {
+        input: {
+          parentType: "plan",
+          parentId: planForReordering.id,
+          reorders: [
+            { id: ingredients[0].id, newOrder: 1 },
+            { id: recipeIngredient.id, newOrder: 2 },
+          ],
+        },
+      },
+    })
+
+    expect(result.errors).toBeDefined()
+    expect(result.data?.reorderIngredients).toBeNull()
+  })
 })
 
 // TODO when meals implemented

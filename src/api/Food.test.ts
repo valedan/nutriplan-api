@@ -16,7 +16,7 @@ import {
 jest.mock("../services/elastic/client")
 const mockedElastic = mocked(ElasticClient, true)
 
-const server = createTestServer()
+const server = createTestServer({ userId: "food_user" })
 
 const getFoodQuery = gql`
   query getFood($id: Int!) {

@@ -51,6 +51,16 @@ type Ingredient {
   order: Int
 }
 
+enum IngredientParent {
+  plan
+  recipe
+}
+
+input IngredientReorder {
+  id: Int!
+  newOrder: Int!
+}
+
 type Meal {
   id: Int!
   ingredients: [Ingredient!]!
@@ -65,6 +75,8 @@ type Mutation {
   createPlan(input: CreatePlanInput!): Plan
   deletePlan(id: Int!): Plan
   removeIngredient(id: Int!): Ingredient
+  reorderIngredients(input: ReorderIngredientsInput!): [Ingredient]
+  updateIngredient(input: UpdateIngredientInput!): Ingredient
   updatePlan(input: UpdatePlanInput!): Plan
 }
 
@@ -103,6 +115,12 @@ type Recipe {
   servings: Int
 }
 
+input ReorderIngredientsInput {
+  parentId: Int!
+  parentType: IngredientParent!
+  reorders: [IngredientReorder!]!
+}
+
 type ServingSize {
   amount: Float!
   description: String!
@@ -112,6 +130,12 @@ type ServingSize {
 enum ServingSizeUnit {
   g
   ml
+}
+
+input UpdateIngredientInput {
+  amount: Float
+  id: Int!
+  measure: String
 }
 
 input UpdatePlanInput {

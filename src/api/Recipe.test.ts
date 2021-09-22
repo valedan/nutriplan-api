@@ -15,7 +15,7 @@ import {
 
 jest.mock("../services/elastic/client")
 
-const server = createTestServer()
+const server = createTestServer({ userId: "recipe_user" })
 
 const getRecipeQuery = gql`
   query getFood($id: Int!) {
@@ -52,8 +52,8 @@ beforeAll(async () => {
     { foodId: foods[0].id },
     { foodId: foods[0].id },
   ])
-  plan = await createPlan()
-  recipe = await createRecipe()
+  plan = await createPlan({ userId: "recipe_user" })
+  recipe = await createRecipe({ userId: "recipe_user" })
 
   const meal = await createMeal({ planId: plan.id, recipeId: recipe.id })
   await createIngredient({ mealId: meal.id, foodId: foods[0].id })

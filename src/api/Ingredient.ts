@@ -6,8 +6,9 @@ import {
   queryField,
   mutationField,
   inputObjectType,
+  enumType,
 } from "nexus"
-import { sumBy } from "lodash"
+import { sumBy, omitBy, isNil } from "lodash"
 import { UserInputError } from "apollo-server"
 import { NotFoundError } from "./shared/errors"
 
@@ -17,6 +18,37 @@ export const addIngredientInput = inputObjectType({
     t.nonNull.int("foodId")
     t.int("planId")
     t.int("recipeId")
+  },
+})
+
+export const updateIngredientInput = inputObjectType({
+  name: "UpdateIngredientInput",
+  definition(t) {
+    t.nonNull.int("id")
+    t.float("amount")
+    t.string("measure")
+  },
+})
+
+export const IngredientReorder = inputObjectType({
+  name: "IngredientReorder",
+  definition(t) {
+    t.nonNull.int("id")
+    t.nonNull.int("newOrder")
+  },
+})
+
+export const IngredientParent = enumType({
+  name: "IngredientParent",
+  members: ["plan", "recipe"],
+})
+
+export const reorderIngredientsInput = inputObjectType({
+  name: "ReorderIngredientsInput",
+  definition(t) {
+    t.nonNull.field("parentType", { type: "IngredientParent" })
+    t.nonNull.int("parentId")
+    t.nonNull.list.field("reorders", { type: nonNull("IngredientReorder") })
   },
 })
 
@@ -105,11 +137,79 @@ export const removeIngredient = mutationField("removeIngredient", {
   },
 })
 
-// does not include order
-// updateIngredient
+export const updateIngredient = mutationField("updateIngredient", {
+  type: "Ingredient",
+  args: { input: nonNull(updateIngredientInput) },
+  resolve: async (_, { input: { id, ...updateData } }, ctx) => {
+    const userId = ctx.auth.user.id
+    const ingredient = await ctx.db.ingredient.findFirst({
+      where: { id },
+      include: { plan: true, recipe: true },
+    })
 
-// can handle many ingredients as long as they have the same parent. may include meals if parent is plan
-// reorderIngredients
+    if (
+      !ingredient ||
+      (ingredient.plan && ingredient.plan.userId !== userId) ||
+      (ingredient.recipe && ingredient.recipe.userId !== userId)
+    ) {
+      throw new NotFoundError("Could not find ingredient")
+    }
+
+    return ctx.db.ingredient.update({
+      where: { id },
+      data: omitBy(updateData, isNil),
+    })
+  },
+})
+
+export const reorderIngredients = mutationField("reorderIngredients", {
+  type: list("Ingredient"),
+  args: { input: nonNull(reorderIngredientsInput) },
+  resolve: async (_, { input }, ctx) => {
+    const userId = ctx.auth.user.id
+    let parent
+    if (input.parentType === "plan") {
+      parent = await ctx.db.plan.findFirst({
+        where: { id: input.parentId, userId },
+        include: { ingredients: true },
+      })
+    } else if (input.parentType === "recipe") {
+      parent = await ctx.db.recipe.findFirst({
+        where: { id: input.parentId, userId },
+        include: { ingredients: true },
+      })
+    }
+
+    if (!parent) {
+      throw new NotFoundError("Could not find parent")
+    }
+
+    const currentSequence = parent.ingredients
+      .sort(({ order }) => order)
+      .map(({ id }) => id)
+
+    const newSequence = [...currentSequence]
+    input.reorders.forEach(({ id, newOrder }) => {
+      if (!currentSequence.includes(id)) {
+        throw new UserInputError("Invalid ingredient id")
+      }
+
+      const ingredientToMove = newSequence.splice(newSequence.indexOf(id), 1)[0]
+      newSequence.splice(newOrder, 0, ingredientToMove)
+    })
+
+    const updatedIngredients = await Promise.all(
+      newSequence.map((id, order) =>
+        ctx.db.ingredient.update({
+          where: { id },
+          data: { order },
+        })
+      )
+    )
+
+    return updatedIngredients
+  },
+})
 
 // move ingredients from plan to meal or vice versa
 // moveIngredients

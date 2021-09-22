@@ -48,6 +48,20 @@ export interface NexusGenInputs {
     name: string; // String!
     startDate: NexusGenScalars['DateTime']; // DateTime!
   }
+  IngredientReorder: { // input type
+    id: number; // Int!
+    newOrder: number; // Int!
+  }
+  ReorderIngredientsInput: { // input type
+    parentId: number; // Int!
+    parentType: NexusGenEnums['IngredientParent']; // IngredientParent!
+    reorders: NexusGenInputs['IngredientReorder'][]; // [IngredientReorder!]!
+  }
+  UpdateIngredientInput: { // input type
+    amount?: number | null; // Float
+    id: number; // Int!
+    measure?: string | null; // String
+  }
   UpdatePlanInput: { // input type
     endDate?: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
@@ -57,6 +71,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  IngredientParent: "plan" | "recipe"
   ServingSizeUnit: "g" | "ml"
 }
 
@@ -171,6 +186,8 @@ export interface NexusGenFieldTypes {
     createPlan: NexusGenRootTypes['Plan'] | null; // Plan
     deletePlan: NexusGenRootTypes['Plan'] | null; // Plan
     removeIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
+    reorderIngredients: Array<NexusGenRootTypes['Ingredient'] | null> | null; // [Ingredient]
+    updateIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     updatePlan: NexusGenRootTypes['Plan'] | null; // Plan
   }
   Plan: { // field return type
@@ -249,6 +266,8 @@ export interface NexusGenFieldTypeNames {
     createPlan: 'Plan'
     deletePlan: 'Plan'
     removeIngredient: 'Ingredient'
+    reorderIngredients: 'Ingredient'
+    updateIngredient: 'Ingredient'
     updatePlan: 'Plan'
   }
   Plan: { // field return type name
@@ -302,6 +321,12 @@ export interface NexusGenArgTypes {
     }
     removeIngredient: { // args
       id: number; // Int!
+    }
+    reorderIngredients: { // args
+      input: NexusGenInputs['ReorderIngredientsInput']; // ReorderIngredientsInput!
+    }
+    updateIngredient: { // args
+      input: NexusGenInputs['UpdateIngredientInput']; // UpdateIngredientInput!
     }
     updatePlan: { // args
       input: NexusGenInputs['UpdatePlanInput']; // UpdatePlanInput!
