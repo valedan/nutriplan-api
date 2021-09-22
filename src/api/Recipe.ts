@@ -1,10 +1,11 @@
 /* eslint-disable import/prefer-default-export */
 import { objectType, nonNull, intArg, list, queryField } from "nexus"
+import RecipeService from "../services/recipe"
 
 export const getRecipe = queryField("recipe", {
   type: "Recipe",
   args: { id: nonNull(intArg()) },
-  resolve: (_root, { id }, ctx) => ctx.db.recipe.findUnique({ where: { id } }),
+  resolve: (_root, { id }, ctx) => RecipeService.getRecipe(id, ctx),
 })
 
 export const getRecipes = queryField("recipes", {
@@ -12,8 +13,7 @@ export const getRecipes = queryField("recipes", {
   args: {
     ids: nonNull(list(nonNull(intArg()))),
   },
-  resolve: (_root, { ids }, ctx) =>
-    ctx.db.recipe.findMany({ where: { id: { in: ids } } }),
+  resolve: (_root, { ids }, ctx) => RecipeService.getRecipes(ids, ctx),
 })
 
 export const Recipe = objectType({

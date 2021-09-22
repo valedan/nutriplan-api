@@ -8,26 +8,9 @@ import {
   mutationField,
   inputObjectType,
 } from "nexus"
-import { omitBy, isNil } from "lodash"
-import { NotFoundError } from "./shared/errors"
+import PlanService from "../services/plan"
 
-export const getPlan = queryField("plan", {
-  type: "Plan",
-  args: { id: nonNull(intArg()) },
-  resolve: async (_root, { id }, ctx) => {
-    const plan = await ctx.db.plan.findFirst({
-      where: { id, userId: ctx.auth.user.id },
-    })
-    if (!plan) throw new NotFoundError("Plan")
-    return plan
-  },
-})
-
-export const getPlans = queryField("plans", {
-  type: nonNull(list(nonNull("Plan"))),
-  resolve: (_root, _args, ctx) =>
-    ctx.db.plan.findMany({ where: { userId: ctx.auth.user.id } }),
-})
+// INPUTS
 
 export const CreatePlanInput = inputObjectType({
   name: "CreatePlanInput",
@@ -48,59 +31,39 @@ export const UpdatePlanInput = inputObjectType({
   },
 })
 
+// QUERIES
+
+export const getPlan = queryField("plan", {
+  type: "Plan",
+  args: { id: nonNull(intArg()) },
+  resolve: (_root, { id }, ctx) => PlanService.getPlan(id, ctx),
+})
+
+export const getPlans = queryField("plans", {
+  type: nonNull(list(nonNull("Plan"))),
+  resolve: (_root, _args, ctx) => PlanService.getPlans(ctx),
+})
+
 export const createPlan = mutationField("createPlan", {
   type: "Plan",
   args: { input: nonNull(CreatePlanInput) },
-  resolve: async (_root, { input }, ctx) => {
-    const plan = await ctx.db.plan.create({
-      data: { userId: ctx.auth.user.id, ...input },
-    })
-    return plan
-  },
+  resolve: (_root, { input }, ctx) => PlanService.createPlan(input, ctx),
 })
 
 export const updatePlan = mutationField("updatePlan", {
   type: "Plan",
   args: { input: nonNull(UpdatePlanInput) },
-  resolve: async (_root, { input: { id, ...updateData } }, ctx) => {
-    // the `where` arg for `update` only accepts unique fields, so can't put userId in it
-    const plan = await ctx.db.plan.findFirst({
-      where: { id, userId: ctx.auth.user.id },
-    })
-
-    if (!plan) {
-      throw new NotFoundError("Plan not found")
-    }
-
-    const updatedPlan = await ctx.db.plan.update({
-      where: { id },
-      // The fields are optional but non-nullable. No option for this in Nexus, so strip null values here
-      data: omitBy(updateData, isNil),
-    })
-
-    return updatedPlan
-  },
+  resolve: (_root, { input }, ctx) => PlanService.updatePlan(input, ctx),
 })
 
 export const deletePlan = mutationField("deletePlan", {
   type: "Plan",
   args: { id: nonNull(intArg()) },
-  resolve: async (_root, { id }: { id: number }, ctx) => {
-    const plan = await ctx.db.plan.findFirst({
-      where: { id, userId: ctx.auth.user.id },
-    })
-
-    if (!plan) {
-      throw new NotFoundError("Plan not found")
-    }
-
-    const deletedPlan = await ctx.db.plan.delete({
-      where: { id },
-    })
-
-    return deletedPlan
-  },
+  resolve: (_root, { id }: { id: number }, ctx) =>
+    PlanService.deletePlan(id, ctx),
 })
+
+// TYPES
 
 export const Plan = objectType({
   name: "Plan",
