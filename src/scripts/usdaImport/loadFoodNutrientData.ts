@@ -33,9 +33,7 @@ const loadFoodNutrientData = async (prisma: PrismaClient): Promise<void> => {
       } catch (e) {
         console.log(e)
         console.log(
-          (buffer.buffer as FoodNutrient[]).map(
-            (fn: FoodNutrient) => fn.food_id
-          )
+          (buffer.buffer as FoodNutrient[]).map((fn: FoodNutrient) => fn.foodId)
         )
       }
     } else {

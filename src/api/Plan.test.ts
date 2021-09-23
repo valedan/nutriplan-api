@@ -15,8 +15,6 @@ import {
 } from "../../tests/factories"
 import db from "../config/db"
 
-jest.mock("../services/elastic/client")
-
 const server = createTestServer({ userId: "plan_user" })
 
 type GraphQLIngredient = NexusGenFieldTypes["Ingredient"] & {

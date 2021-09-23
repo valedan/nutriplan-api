@@ -1,4 +1,3 @@
-import { sumBy, omitBy, isNil } from "lodash"
 import { UserInputError } from "apollo-server"
 import { Ingredient } from ".prisma/client"
 import { MyContext } from "../../config/context"

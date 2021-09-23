@@ -1,7 +1,7 @@
 import { GraphQLResponse } from "apollo-server-types"
 import { gql } from "graphql-request"
 import { subDays, addDays } from "date-fns"
-import { Food, Ingredient, Plan, Portion, Recipe } from "@prisma/client"
+import { Food, Ingredient, Plan, Recipe } from "@prisma/client"
 import { NexusGenFieldTypes } from "../config/nexus-typegen"
 import createTestServer from "../../tests/__helpers"
 import {
@@ -9,17 +9,13 @@ import {
   createPortions,
   createPlan,
   createRecipe,
-  createMeal,
   createIngredient,
 } from "../../tests/factories"
 import db from "../config/db"
 
-jest.mock("../services/elastic/client")
-
 const server = createTestServer({ userId: "ingredient_user" })
 
 let foods: Food[] = []
-let portions: Portion[] = []
 let planWithIngredients: Plan
 let planWithoutIngredients: Plan
 let otherPlan: Plan
@@ -29,10 +25,7 @@ let otherPlanIngredient: Ingredient
 
 beforeAll(async () => {
   foods = await createFoods(3)
-  portions = await createPortions(2, [
-    { foodId: foods[0].id },
-    { foodId: foods[0].id },
-  ])
+  await createPortions(2, [{ foodId: foods[0].id }, { foodId: foods[0].id }])
   planWithIngredients = await createPlan({
     userId: "ingredient_user",
     name: "Test Plan",
@@ -185,7 +178,7 @@ describe("Adding an ingredient", () => {
   })
 
   // TODO once portions are more figured out
-  // it("Uses the correct default serving size and measure", async () => {})
+  it.todo("Uses the correct default serving size and measure", async () => {})
 })
 
 describe("Removing an ingredient", () => {
@@ -615,10 +608,16 @@ describe("Reordering ingredients", () => {
 })
 
 // TODO when meals implemented
-// describe("Moving ingredients", () => {
-//   it("Moves ingredients from a plan to a meal", async () => {})
-//   it("Moves ingredients from a meal to a plan", async () => {})
-//   it("returns an error when resource doesn't exist", async () => {})
-//   it("returns an error when resource belongs to another user", async () => {})
-//   it("returns an error when ingredients belong to different parents", async () => {})
-// })
+describe("Moving ingredients", () => {
+  it.todo("Moves ingredients from a plan to a meal", async () => {})
+  it.todo("Moves ingredients from a meal to a plan", async () => {})
+  it.todo("returns an error when resource doesn't exist", async () => {})
+  it.todo(
+    "returns an error when resource belongs to another user",
+    async () => {}
+  )
+  it.todo(
+    "returns an error when ingredients belong to different parents",
+    async () => {}
+  )
+})

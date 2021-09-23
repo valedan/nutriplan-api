@@ -1,15 +1,11 @@
 import {
-  objectType,
   nonNull,
   intArg,
   list,
-  queryField,
   mutationField,
   inputObjectType,
   enumType,
 } from "nexus"
-import { UserInputError } from "apollo-server"
-import { NotFoundError } from "./shared/errors"
 import IngredientService from "../services/ingredient"
 
 export const addIngredientInput = inputObjectType({
@@ -79,5 +75,5 @@ export const reorderIngredients = mutationField("reorderIngredients", {
     IngredientService.reorderIngredients(input, ctx),
 })
 
-// move ingredients from plan to meal or vice versa
+// TODO: move ingredients from plan to meal or vice versa
 // moveIngredients

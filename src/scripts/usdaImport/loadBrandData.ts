@@ -37,7 +37,7 @@ const loadBrandData = async (prisma: PrismaClient): Promise<void> => {
           notASignificantSourceOf: typedRow.not_a_significant_source_of || null,
           servingSize: Number(typedRow.serving_size) || null,
           servingSizeUnit: typedRow.serving_size_unit || null,
-          servingSizeDescription: typedRow.householdServingFulltext || null,
+          servingSizeDescription: typedRow.household_serving_fulltext || null,
           category: typedRow.branded_food_category || null,
           fdcDataSource: typedRow.data_source || null,
           fdcModifiedDate: typedRow.modified_date

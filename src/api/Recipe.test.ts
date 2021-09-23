@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { GraphQLResponse } from "apollo-server-types"
 import { gql } from "graphql-request"
-import { Food, Plan, Portion, Recipe } from "@prisma/client"
+import { Food, Plan, Recipe } from "@prisma/client"
 import { NexusGenFieldTypes } from "../config/nexus-typegen"
 import createTestServer from "../../tests/__helpers"
 import {
@@ -12,8 +12,6 @@ import {
   createMeal,
   createIngredient,
 } from "../../tests/factories"
-
-jest.mock("../services/elastic/client")
 
 const server = createTestServer({ userId: "recipe_user" })
 
@@ -42,16 +40,12 @@ const getRecipeQuery = gql`
 `
 
 let foods: Food[] = []
-let portions: Portion[] = []
 let plan: Plan
 let recipe: Recipe
 
 beforeAll(async () => {
   foods = await createFoods(2)
-  portions = await createPortions(2, [
-    { foodId: foods[0].id },
-    { foodId: foods[0].id },
-  ])
+  await createPortions(2, [{ foodId: foods[0].id }, { foodId: foods[0].id }])
   plan = await createPlan({ userId: "recipe_user" })
   recipe = await createRecipe({ userId: "recipe_user" })
 
