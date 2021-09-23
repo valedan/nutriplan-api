@@ -4,7 +4,7 @@ import { gql } from "graphql-request"
 import { mocked } from "ts-jest/utils"
 import { Food, Nutrient, FoodNutrient, Portion } from "@prisma/client"
 import { NexusGenFieldTypes } from "../config/nexus-typegen"
-import ElasticClient from "../services/elastic/client"
+import ElasticClient from "../services/food/searchFoods/client"
 import createTestServer from "../../tests/__helpers"
 import {
   createFoodNutrient,
@@ -13,7 +13,7 @@ import {
   createPortions,
 } from "../../tests/factories"
 
-jest.mock("../services/elastic/client")
+jest.mock("../services/food/searchFoods/client")
 const mockedElastic = mocked(ElasticClient, true)
 
 const server = createTestServer({ userId: "food_user" })
@@ -122,7 +122,7 @@ describe("Querying a single food", () => {
     ).toIncludeSameMembers(portions.map(({ gramWeight }) => gramWeight))
   })
 
-  it("returns null if food is not found", async () => {
+  it("returns an error if food is not found", async () => {
     const result: GraphQLResponse & {
       data?: { food?: NexusGenFieldTypes["Food"] } | null | undefined
     } = await server.executeOperation({
@@ -130,7 +130,7 @@ describe("Querying a single food", () => {
       variables: { id: 432423 },
     })
 
-    expect(result.errors).toBeUndefined()
+    expect(result.errors).toBeDefined()
     expect(result.data?.food).toBeNull()
   })
 })

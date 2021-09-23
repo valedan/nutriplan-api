@@ -1,9 +1,9 @@
 import _ from "lodash"
 import { PorterStemmer } from "natural"
 import { Food, FoodNutrient, Nutrient } from "@prisma/client"
-import ElasticClient from "../client"
+import ElasticClient from "./client"
 import elasticOptions from "./elasticSearchOptions"
-import db from "../../../config/db"
+import { MyContext } from "../../../config/context"
 
 const EXACT_MATCH_WEIGHT = 2.5
 const START_OF_DESCRIPTION_WEIGHT = 3
@@ -129,7 +129,8 @@ const prioritizeExactMatches = (
 }
 
 const searchFoods = async (
-  searchTerm: string
+  searchTerm: string,
+  { db }: MyContext
 ): Promise<FoodResultWithScore[]> => {
   const resp = (await ElasticClient.search(
     "food",
