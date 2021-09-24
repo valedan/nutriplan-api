@@ -178,7 +178,7 @@ describe("Adding an ingredient", () => {
   })
 
   // TODO once portions are more figured out
-  it.todo("Uses the correct default serving size and measure", async () => {})
+  it.todo("Uses the correct default serving size and measure")
 })
 
 describe("Removing an ingredient", () => {
@@ -609,15 +609,9 @@ describe("Reordering ingredients", () => {
 
 // TODO when meals implemented
 describe("Moving ingredients", () => {
-  it.todo("Moves ingredients from a plan to a meal", async () => {})
-  it.todo("Moves ingredients from a meal to a plan", async () => {})
-  it.todo("returns an error when resource doesn't exist", async () => {})
-  it.todo(
-    "returns an error when resource belongs to another user",
-    async () => {}
-  )
-  it.todo(
-    "returns an error when ingredients belong to different parents",
-    async () => {}
-  )
+  it.todo("Moves ingredients from a plan to a meal")
+  it.todo("Moves ingredients from a meal to a plan")
+  it.todo("returns an error when resource doesn't exist")
+  it.todo("returns an error when resource belongs to another user")
+  it.todo("returns an error when ingredients belong to different parents")
 })
