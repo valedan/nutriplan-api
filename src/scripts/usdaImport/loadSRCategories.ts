@@ -49,7 +49,7 @@ const loadSRCategories = async (prisma: PrismaClient): Promise<void> => {
   }
 
   const foods = await prisma.food.findMany({
-    where: { data_source: "usda_sr_legacy_food" },
+    where: { dataSource: "usda_sr_legacy_food" },
   })
 
   for await (const food of foods) {

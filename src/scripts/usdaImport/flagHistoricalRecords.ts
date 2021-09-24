@@ -22,7 +22,6 @@ type DuplicateQueryResult = {
 // For each gtinUpc, find all foods with that gtinUpc
 // For each food, set historical to true, except the one with the highest id
 const flagHistoricalRecords = async (prisma: PrismaClient): Promise<void> => {
-  // TODO: Update to handle camelCase properly?
   const results = await prisma.$queryRaw<DuplicateQueryResult[]>`
   SELECT gtinUpc, COUNT(*)
   FROM "public"."Food" food

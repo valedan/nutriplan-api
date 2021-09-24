@@ -19,13 +19,13 @@ const loadPortionData = async (prisma: PrismaClient): Promise<void> => {
 
     await buffer.create({
       id: Number(typedRow.id),
-      food_id: Number(typedRow.fdc_id),
-      sequence_number: Number(typedRow.seq_num),
-      measure_unit: measureUnits[typedRow.measure_unit_id],
-      portion_description: typedRow.portion_description,
+      foodId: Number(typedRow.fdc_id),
+      sequenceNumber: Number(typedRow.seq_num),
+      measureUnit: measureUnits[typedRow.measure_unit_id],
+      portionDescription: typedRow.portion_description,
       modifier: typedRow.modifier,
       amount: Number(typedRow.amount),
-      gram_weight: Number(typedRow.gram_weight),
+      gramWeight: Number(typedRow.gram_weight),
     } as Portion)
 
     console.log(`Created Portion ${counter}`)

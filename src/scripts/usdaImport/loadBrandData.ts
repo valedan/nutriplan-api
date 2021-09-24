@@ -33,7 +33,7 @@ const loadBrandData = async (prisma: PrismaClient): Promise<void> => {
           brandName: typedRow.brand_name || null,
           subbrandName: typedRow.subbrand_name || null,
           gtinUpc: typedRow.gtin_upc || null,
-          ingredients: typedRow.ingredients || null,
+          subIngredients: typedRow.ingredients || null,
           notASignificantSourceOf: typedRow.not_a_significant_source_of || null,
           servingSize: Number(typedRow.serving_size) || null,
           servingSizeUnit: typedRow.serving_size_unit || null,

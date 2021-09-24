@@ -20,7 +20,7 @@ const sendToElastic = async (foods: Food[]) => {
 // TODO: modify this to use p-queue like the other scripts next time I'm doing a huge update
 const newFoodRecords = async () => {
   const newFoods = await prisma.food.findMany({
-    where: { updated_at: { gt: LAST_SYNC_DATE } },
+    where: { updatedAt: { gt: LAST_SYNC_DATE } },
   })
 
   let buffer = []

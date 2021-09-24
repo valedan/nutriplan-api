@@ -19,7 +19,7 @@ const removeDescriptionPhrases = async (
 ): Promise<void> => {
   let index = 0
   const foods = await prisma.food.findMany({
-    where: { data_source: { in: DATA_SOURCES } },
+    where: { dataSource: { in: DATA_SOURCES } },
   })
   for await (const food of foods) {
     if (

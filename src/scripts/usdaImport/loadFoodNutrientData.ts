@@ -20,14 +20,14 @@ const loadFoodNutrientData = async (prisma: PrismaClient): Promise<void> => {
     const nutrient = nutrients.find(
       (n) =>
         n.id === Number(typedRow.nutrient_id) ||
-        n.nutrient_number === Number(typedRow.nutrient_id)
+        n.nutrientNumber === Number(typedRow.nutrient_id)
     )
     if (nutrient) {
       try {
         await buffer.create({
           id: Number(typedRow.id),
-          food_id: Number(typedRow.fdc_id),
-          nutrient_id: nutrient.id,
+          foodId: Number(typedRow.fdc_id),
+          nutrientId: nutrient.id,
           amount: Number(typedRow.amount),
         } as FoodNutrient)
       } catch (e) {

@@ -18,7 +18,7 @@ queue.on("next", () => {
 const performUpdate = (
   foods: (Food & {
     _count: {
-      food_nutrients: number
+      foodNutrients: number
     } | null
   })[],
   prisma: PrismaClient
@@ -28,7 +28,7 @@ const performUpdate = (
       await prisma.food.update({
         where: { id: food.id },
         data: {
-          nutrient_count: food._count?.food_nutrients,
+          nutrientCount: food._count?.foodNutrients,
         },
       })
     })
@@ -40,11 +40,11 @@ const populateNutrientCounts = async (
   prisma = new PrismaClient()
 ): Promise<void> => {
   const baseQuery = {
-    where: { nutrient_count: null },
+    where: { nutrientCount: null },
     take: 10000,
     include: {
       _count: {
-        select: { food_nutrients: true },
+        select: { foodNutrients: true },
       },
     },
   }
