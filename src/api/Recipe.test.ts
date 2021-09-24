@@ -51,7 +51,7 @@ beforeAll(async () => {
 
   const meal = await createMeal({ planId: plan.id, recipeId: recipe.id })
   await createIngredient({ mealId: meal.id, foodId: foods[0].id })
-  await createIngredient({ recipeId: plan.id, foodId: foods[1].id })
+  await createIngredient({ recipeId: recipe.id, foodId: foods[1].id })
 })
 
 type GraphQLIngredient = NexusGenFieldTypes["Ingredient"] & {
