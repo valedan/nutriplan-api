@@ -29,22 +29,21 @@ const loadBrandData = async (prisma: PrismaClient): Promise<void> => {
       prisma.food.update({
         where: { id: foodId },
         data: {
-          brand_owner: typedRow.brand_owner || null,
-          brand_name: typedRow.brand_name || null,
-          subbrand_name: typedRow.subbrand_name || null,
-          gtin_upc: typedRow.gtin_upc || null,
-          ingredients: typedRow.ingredients || null,
-          not_a_significant_source_of:
-            typedRow.not_a_significant_source_of || null,
-          serving_size: Number(typedRow.serving_size) || null,
-          serving_size_unit: typedRow.serving_size_unit || null,
-          serving_size_description: typedRow.household_serving_fulltext || null,
+          brandOwner: typedRow.brand_owner || null,
+          brandName: typedRow.brand_name || null,
+          subbrandName: typedRow.subbrand_name || null,
+          gtinUpc: typedRow.gtin_upc || null,
+          subIngredients: typedRow.ingredients || null,
+          notASignificantSourceOf: typedRow.not_a_significant_source_of || null,
+          servingSize: Number(typedRow.serving_size) || null,
+          servingSizeUnit: typedRow.serving_size_unit || null,
+          servingSizeDescription: typedRow.household_serving_fulltext || null,
           category: typedRow.branded_food_category || null,
-          fdc_data_source: typedRow.data_source || null,
-          fdc_modified_date: typedRow.modified_date
+          fdcDataSource: typedRow.data_source || null,
+          fdcModifiedDate: typedRow.modified_date
             ? new Date(typedRow.modified_date)
             : null,
-          fdc_available_date: typedRow.available_date
+          fdcAvailableDate: typedRow.available_date
             ? new Date(typedRow.available_date)
             : null,
         },

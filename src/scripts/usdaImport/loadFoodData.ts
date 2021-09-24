@@ -19,7 +19,7 @@ const loadFoodData = async (prisma: PrismaClient): Promise<void> => {
     await foodBuffer.create({
       id: Number(typedRow.fdc_id),
       description: typedRow.description,
-      data_source: `usda_${typedRow.data_type}`,
+      dataSource: `usda_${typedRow.data_type}`,
       category: wweiaCategories[typedRow.food_category_id],
     } as Food)
 

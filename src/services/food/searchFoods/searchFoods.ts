@@ -1,9 +1,9 @@
 import _ from "lodash"
 import { PorterStemmer } from "natural"
 import { Food, FoodNutrient, Nutrient } from "@prisma/client"
-import ElasticClient from "../client"
+import ElasticClient from "./client"
 import elasticOptions from "./elasticSearchOptions"
-import db from "../../../config/db"
+import { MyContext } from "../../../config/context"
 
 const EXACT_MATCH_WEIGHT = 2.5
 const START_OF_DESCRIPTION_WEIGHT = 3
@@ -39,7 +39,7 @@ interface SearchResponse {
 }
 
 type FoodResult = Food & {
-  food_nutrients: (FoodNutrient & {
+  foodNutrients: (FoodNutrient & {
     nutrient: Nutrient
   })[]
 }
@@ -52,9 +52,9 @@ const removeDuplicates = (
   const fields = <const>[
     "description",
     "category",
-    "brand_name",
-    "brand_owner",
-    "data_source",
+    "brandName",
+    "brandOwner",
+    "dataSource",
   ]
   const uniqueFoods = _.uniqWith(foods, (a, b) =>
     fields.every((field) => a[field] === b[field])
@@ -66,7 +66,7 @@ const prioritizeMoreNutrients = (
   foods: FoodResultWithScore[]
 ): FoodResultWithScore[] => {
   const prioritizedFoods = foods.map((food) => {
-    const nutrientCount = food.food_nutrients.length
+    const nutrientCount = food.foodNutrients.length
     return {
       ...food,
       // Just adding the nutrients meant that for low-scoring result sets, nutrient count was completely dominant, and for high-scoring result sets, it was a bit irrelevant. Can't simply multiply because then again it would completely dominate.
@@ -126,15 +126,11 @@ const prioritizeExactMatches = (
     return food
   })
   return prioritizedFoods
-  // const exactMatches = foods.filter(
-  //   (food) => food.description.trim().toLowerCase() === searchTerm.trim().toLowerCase()
-  // );
-  // const exactMatchIds = exactMatches.map((food) => food.id);
-  // return [...exactMatches, ...foods.filter((food) => !exactMatchIds.includes(food.id))];
 }
 
 const searchFoods = async (
-  searchTerm: string
+  searchTerm: string,
+  { db }: MyContext
 ): Promise<FoodResultWithScore[]> => {
   const resp = (await ElasticClient.search(
     "food",
@@ -147,7 +143,7 @@ const searchFoods = async (
 
   const foodsWithPortions = await db.food.findMany({
     where: { id: { in: elasticIds } },
-    include: { food_nutrients: { include: { nutrient: true } } },
+    include: { foodNutrients: { include: { nutrient: true } } },
   })
 
   foodsWithPortions.sort(

@@ -20,7 +20,7 @@ const loadNutrientData = async (prisma: PrismaClient): Promise<void> => {
       id: Number(typedRow.id),
       name: typedRow.name,
       unit: typedRow.unit_name,
-      nutrient_number: Math.floor(Number(typedRow.nutrient_nbr)),
+      nutrientNumber: Math.floor(Number(typedRow.nutrient_nbr)),
     } as Nutrient)
 
     console.log(`Created Nutrient ${counter}`)

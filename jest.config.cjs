@@ -58,8 +58,11 @@ module.exports = {
   globalTeardown: "./tests/jestTeardown.ts",
 
   // A set of global variables that need to be available in all test environments
-  // globals: {},
-
+  globals: {
+    "ts-jest": {
+      // tsconfig: "tsconfig.test.json",
+    },
+  },
   // An array of directory names to be searched recursively up from the requiring module's location
   // moduleDirectories: [
   //   "node_modules"
@@ -123,7 +126,7 @@ module.exports = {
   setupFiles: [],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  // setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ["jest-extended"],
 
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
@@ -180,4 +183,4 @@ module.exports = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
-};
+}

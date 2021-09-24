@@ -6,5 +6,11 @@ export default new ApolloServer({
   schema,
   context,
   // TODO: put these in env vars
-  cors: { origin: ["http://localhost:3000", "https://nutriplan.vercel.app"] },
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "https://nutriplan.vercel.app",
+      "https://studio.apollographql.com",
+    ],
+  },
 })

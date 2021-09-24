@@ -1,26 +1,102 @@
-import { objectType, extendType, nonNull, intArg, list, stringArg } from "nexus"
-import { searchFoods } from "../services/elastic/search"
-import { MyContext } from "../config/context"
+/* eslint-disable import/prefer-default-export */
+import {
+  objectType,
+  nonNull,
+  intArg,
+  list,
+  stringArg,
+  enumType,
+  queryField,
+} from "nexus"
+import FoodService from "../services/food"
 
-export const FoodQuery = extendType({
-  type: "Query",
+export const getFood = queryField("food", {
+  type: "Food",
+  args: { id: nonNull(intArg()) },
+  resolve: (_root, { id }, ctx) => FoodService.getFood(id, ctx),
+})
+
+export const getFoods = queryField("foods", {
+  type: nonNull(list(nonNull("Food"))),
+  args: {
+    ids: nonNull(list(nonNull(intArg()))),
+  },
+  resolve: (_root, { ids }, ctx) => FoodService.getFoods(ids, ctx),
+})
+
+export const searchFoods = queryField("searchFoods", {
+  type: list("Food"),
+  args: { searchTerm: nonNull(stringArg()) },
+  resolve: (_root, { searchTerm }, ctx) =>
+    FoodService.searchFoods(searchTerm, ctx),
+})
+
+export const ServingSizeUnit = enumType({
+  name: "ServingSizeUnit",
+  members: ["g", "ml"],
+})
+
+export const ServingSize = objectType({
+  name: "ServingSize",
   definition(t) {
-    t.field("food", {
-      type: "Food",
-      args: { id: nonNull(intArg()) },
-      // TODO: Figure out why I need to pass in MyContext here. Nexus is aware that this should be the type (see typegen file) but for some reason I need to pass in anyway.
-      resolve(_root, args, ctx: MyContext) {
-        const food = ctx.db.food.findUnique({ where: { id: args.id } })
-        return food
+    t.nonNull.float("amount")
+    t.nonNull.string("description")
+    t.nonNull.field("unit", { type: nonNull(ServingSizeUnit) })
+  },
+})
+
+export const Food = objectType({
+  name: "Food",
+  definition(t) {
+    t.nonNull.int("id")
+    t.nonNull.string("dataSource")
+
+    t.string("description")
+    t.string("category")
+    t.string("brandName")
+    t.float("searchScore")
+
+    t.field("servingSize", {
+      type: ServingSize,
+      resolve: async ({ id }, _args, ctx) => {
+        const food = await ctx.db.food.findUnique({ where: { id } })
+
+        if (
+          !food ||
+          !food.servingSize ||
+          !food.servingSizeUnit ||
+          !food.servingSizeDescription
+        ) {
+          return null
+        }
+
+        return {
+          amount: food.servingSize,
+          description: food.servingSizeDescription,
+          unit: food.servingSizeUnit,
+        }
       },
     })
 
-    t.field("searchFoods", {
-      type: list("Food"),
-      args: { searchTerm: nonNull(stringArg()) },
-      async resolve(_root, { searchTerm }) {
-        const results = await searchFoods(searchTerm)
-        return results
+    t.nonNull.field("portions", {
+      type: nonNull(list(nonNull("Portion"))),
+      resolve: ({ id }, _args, ctx) =>
+        ctx.db.food.findUnique({ where: { id } }).portions(),
+    })
+
+    t.field("nutrients", {
+      type: nonNull(list(nonNull("FoodNutrient"))),
+      resolve: async ({ id }, _args, ctx) => {
+        const foodNutrients = await ctx.db.food
+          .findUnique({
+            where: { id },
+          })
+          .foodNutrients({ include: { nutrient: true } })
+
+        return foodNutrients.map((foodNutrient) => ({
+          ...foodNutrient.nutrient,
+          amount: foodNutrient.amount,
+        }))
       },
     })
   },
@@ -29,43 +105,22 @@ export const FoodQuery = extendType({
 export const Portion = objectType({
   name: "Portion",
   definition(t) {
-    t.int("id")
+    // TODO: consider combining these into a single field
+    t.string("unit")
     t.string("measure")
-    t.float("gram_weight")
-    t.int("sequence_number")
-  },
-})
-
-export const Nutrient = objectType({
-  name: "Nutrient",
-  definition(t) {
-    t.int("id")
-    t.string("name")
+    t.string("description")
+    t.nonNull.float("gramWeight")
+    t.int("order")
   },
 })
 
 export const FoodNutrient = objectType({
   name: "FoodNutrient",
   definition(t) {
-    t.int("id")
-    t.float("amount")
-    t.field("nutrient", { type: "Nutrient" })
-  },
-})
-
-export const Food = objectType({
-  name: "Food",
-  definition(t) {
-    t.int("id")
-    t.string("description")
-    t.string("category")
-    t.string("brand_name")
-    t.string("data_source")
-    t.string("category")
-    t.float("serving_size")
-    t.string("ingredients")
-    t.float("searchScore")
-    t.field("portions", { type: list("Portion") })
-    t.field("food_nutrients", { type: list("FoodNutrient") })
+    // a Nutrient from the database with the amount in this food
+    t.nonNull.int("id")
+    t.nonNull.float("amount")
+    t.nonNull.string("name")
+    t.nonNull.string("unit")
   },
 })

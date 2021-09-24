@@ -26,7 +26,7 @@ const elastic = new AppSearchClient(
   process.env.ELASTIC_APP_SEARCH_API_KEY,
   () => process.env.ELASTIC_APP_SEARCH_URL ?? ""
 )
-
+// TODO: Need to map the DB columns to snake_case versions now that I've renamed them
 const sendToElastic = (foods: Food[]) =>
   _.chunk(foods, ELASTIC_CHUNK_SIZE).forEach((chunk) => {
     void queue.add(async () => {
@@ -42,7 +42,7 @@ const sendToElastic = (foods: Food[]) =>
               id: { in: chunk.map((food) => food.id) },
             },
             data: {
-              in_elasticsearch: true,
+              inElasticsearch: true,
             },
           })
 
@@ -62,7 +62,7 @@ const exportData = async () => {
     take: 10000,
     where: {
       historical: false,
-      in_elasticsearch: false,
+      inElasticsearch: false,
     },
   }
 

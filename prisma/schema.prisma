@@ -7,86 +7,158 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["selectRelationCount"]
+  provider = "prisma-client-js"
 
 }
 
-// Using snake_case because elastic requires it and postgres is awkward without it
 model Food {
-  id                                Int              @id @default(autoincrement())
-  created_at                        DateTime         @default(now())
-  updated_at                        DateTime         @updatedAt
-  data_source                       String
-  description                       String?
-  additional_descriptions           String[]
-  category                          String?
-  brand_owner                       String?
-  brand_name                        String?
-  subbrand_name                     String?
-  gtin_upc                          String?
-  ingredients                       String?
-  not_a_significant_source_of       String?
-  serving_size                      Float?
-  serving_size_unit                 ServingSizeUnit?
-  serving_size_description          String?
-  common_names                      String?
-  barcode                           String?
-  doi                               String?
-  historical                        Boolean          @default(false)
-  protein_calorie_conversion_factor Float?
-  fat_calorie_conversion_factor     Float?
-  carbohydrate_conversion_factor    Float?
-  fdc_data_source                   String?
-  fdc_modified_date                 DateTime?
-  fdc_available_date                DateTime?
-  nutrient_count                    Int?
-  in_elasticsearch                  Boolean          @default(false)
-  food_nutrients                    FoodNutrient[]
-  portions                          Portion[]
+  id                             Int              @id @default(autoincrement())
+  createdAt                      DateTime         @default(now())
+  updatedAt                      DateTime         @updatedAt
+  dataSource                     String
+  description                    String?
+  additionalDescriptions         String[]
+  category                       String?
+  brandOwner                     String?
+  brandName                      String?
+  subbrandName                   String?
+  gtinUpc                        String?
+  subIngredients                 String?
+  notASignificantSourceOf        String?
+  servingSize                    Float?
+  servingSizeUnit                ServingSizeUnit?
+  servingSizeDescription         String?
+  commonNames                    String?
+  barcode                        String?
+  doi                            String?
+  historical                     Boolean          @default(false)
+  proteinCalorieConversionFactor Float?
+  fatCalorieConversionFactor     Float?
+  carbohydrateConversionFactor   Float?
+  fdcDataSource                  String?
+  fdcModifiedDate                DateTime?
+  fdcAvailableDate               DateTime?
+  nutrientCount                  Int?
+  inElasticsearch                Boolean          @default(false)
+  foodNutrients                  FoodNutrient[]
+  portions                       Portion[]
+
+  ingredients Ingredient[]
 
   @@index([description])
-  @@index([gtin_upc])
+  @@index([gtinUpc])
 }
 
 model Portion {
-  id                  Int      @id @default(autoincrement())
-  created_at          DateTime @default(now())
-  updated_at          DateTime @updatedAt
-  food                Food     @relation(fields: [food_id], references: [id])
-  food_id             Int
-  sequence_number     Int      @default(1)
-  measure_unit        String
-  portion_description String?
-  modifier            String?
-  gram_weight         Float
-  amount              Float
+  id                 Int      @id @default(autoincrement())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  food               Food     @relation(fields: [foodId], references: [id])
+  foodId             Int
+  sequenceNumber     Int      @default(1)
+  measureUnit        String
+  portionDescription String?
+  modifier           String?
+  gramWeight         Float
+  amount             Float
 
-  @@index([food_id])
+  @@index([foodId])
 }
 
 model Nutrient {
-  id              Int            @id @default(autoincrement())
-  created_at      DateTime       @default(now())
-  updated_at      DateTime       @updatedAt
-  name            String
-  nutrient_number Int
-  unit            NutrientUnit
-  food_nutrients  FoodNutrient[]
+  id             Int            @id @default(autoincrement())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  name           String
+  nutrientNumber Int
+  unit           NutrientUnit
+  foodNutrients  FoodNutrient[]
 }
 
 model FoodNutrient {
-  id          Int      @id @default(autoincrement())
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  food        Food     @relation(fields: [food_id], references: [id])
-  food_id     Int
-  nutrient    Nutrient @relation(fields: [nutrient_id], references: [id])
-  nutrient_id Int
-  amount      Float
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  food       Food     @relation(fields: [foodId], references: [id])
+  foodId     Int
+  nutrient   Nutrient @relation(fields: [nutrientId], references: [id])
+  nutrientId Int
 
-  @@index([food_id])
-  @@index([nutrient_id])
+  amount Float
+
+  @@index([foodId])
+  @@index([nutrientId])
+}
+
+model Plan {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  name      String
+  startDate DateTime
+  endDate   DateTime
+
+  meals       Meal[]
+  ingredients Ingredient[]
+
+  @@index([userId])
+}
+
+model Meal {
+  // Derive 'modified' state by comparing to recipe
+  // When updating a recipe, non-modified meals should stay synced with recipe
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  servings Int
+  order    Int
+
+  plan   Plan @relation(fields: [planId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  planId Int
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int
+
+  ingredients Ingredient[]
+}
+
+model Recipe {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId   String
+  name     String
+  servings Int
+
+  ingredients Ingredient[]
+  meals       Meal[]
+}
+
+model Ingredient {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  amount  Float
+  measure String
+  order   Int
+
+  food   Food @relation(fields: [foodId], references: [id])
+  foodId Int
+
+  // Belongs to a Plan OR Meal OR Recipe
+  plan   Plan? @relation(fields: [planId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  planId Int?
+
+  meal   Meal? @relation(fields: [mealId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  mealId Int?
+
+  recipe   Recipe? @relation(fields: [recipeId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  recipeId Int?
 }
 
 enum ServingSizeUnit {
