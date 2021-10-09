@@ -7,9 +7,11 @@ import { NexusGenFieldTypes } from "../config/nexus-typegen"
 import ElasticClient from "../services/food/searchFoods/client"
 import createTestServer from "../../tests/__helpers"
 import {
+  createFood,
   createFoodNutrient,
   createFoods,
   createNutrients,
+  createPortion,
   createPortions,
 } from "../../tests/factories"
 
@@ -28,6 +30,7 @@ const getFoodQuery = gql`
         amount
       }
       portions {
+        measure
         gramWeight
       }
     }
@@ -76,6 +79,19 @@ beforeAll(async () => {
   foods = await createFoods(2)
   nutrients = await createNutrients(2)
 
+  foods.push(
+    await createFood({
+      description: "branded food",
+      servingSize: 10,
+      servingSizeUnit: "g",
+    })
+  )
+
+  await createPortion({
+    foodId: foods[2].id,
+    measureUnit: "tbsp",
+  })
+
   foodNutrients.push(
     await createFoodNutrient({
       foodId: foods[0].id,
@@ -119,7 +135,30 @@ describe("Querying a single food", () => {
 
     expect(
       result.data?.food?.portions.map(({ gramWeight }) => gramWeight)
-    ).toIncludeSameMembers(portions.map(({ gramWeight }) => gramWeight))
+    ).toIncludeAllMembers(portions.map(({ gramWeight }) => gramWeight))
+  })
+
+  it("includes all available portions", async () => {
+    const result: GraphQLResponse & {
+      data?: { food?: NexusGenFieldTypes["Food"] } | null | undefined
+    } = await server.executeOperation({
+      query: getFoodQuery,
+      variables: { id: foods[2].id },
+    })
+
+    expect(result.errors).toBeUndefined()
+
+    const portionMeasures = result.data?.food?.portions.map(
+      ({ measure }) => measure
+    )
+
+    expect(portionMeasures).toInclude("g")
+    expect(portionMeasures).toInclude("oz")
+    expect(portionMeasures).toInclude("fl oz")
+    expect(portionMeasures).toInclude("cup")
+    expect(portionMeasures).toInclude("tablespoon")
+    expect(portionMeasures).toInclude("teaspoon")
+    expect(portionMeasures).toInclude("serving")
   })
 
   it("returns an error if food is not found", async () => {
@@ -147,9 +186,10 @@ describe("Querying multiple foods", () => {
     expect(result.errors).toBeUndefined()
     expect(result.data?.foods).toHaveLength(2)
 
-    expect(result.data?.foods?.map(({ id }) => id)).toIncludeSameMembers(
-      foods.map(({ id }) => id)
-    )
+    expect(result.data?.foods?.map(({ id }) => id)).toIncludeSameMembers([
+      foods[0].id,
+      foods[1].id,
+    ])
     expect(
       result.data?.foods
         ?.find(({ id }) => id === foods[0].id)
@@ -177,9 +217,10 @@ describe("Searching for foods", () => {
     expect(result.errors).toBeUndefined()
     expect(result.data?.searchFoods).toHaveLength(2)
 
-    expect(result.data?.searchFoods?.map(({ id }) => id)).toIncludeSameMembers(
-      foods.map(({ id }) => id)
-    )
+    expect(result.data?.searchFoods?.map(({ id }) => id)).toIncludeSameMembers([
+      foods[0].id,
+      foods[1].id,
+    ])
     expect(
       result.data?.searchFoods
         ?.find(({ id }) => id === foods[0].id)

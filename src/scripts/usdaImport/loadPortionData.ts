@@ -22,7 +22,6 @@ const loadPortionData = async (prisma: PrismaClient): Promise<void> => {
       foodId: Number(typedRow.fdc_id),
       sequenceNumber: Number(typedRow.seq_num),
       measureUnit: measureUnits[typedRow.measure_unit_id],
-      portionDescription: typedRow.portion_description,
       modifier: typedRow.modifier,
       amount: Number(typedRow.amount),
       gramWeight: Number(typedRow.gram_weight),

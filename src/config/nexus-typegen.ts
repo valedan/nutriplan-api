@@ -102,6 +102,7 @@ export interface NexusGenObjects {
   }
   Ingredient: { // root type
     amount: number; // Float!
+    foodId: number; // Int!
     id: number; // Int!
     measure: string; // String!
     order?: number | null; // Int
@@ -119,11 +120,8 @@ export interface NexusGenObjects {
     startDate?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Portion: { // root type
-    description?: string | null; // String
     gramWeight: number; // Float!
-    measure?: string | null; // String
-    order?: number | null; // Int
-    unit?: string | null; // String
+    measure: string; // String!
   }
   Query: {};
   Recipe: { // root type
@@ -158,7 +156,6 @@ export interface NexusGenFieldTypes {
     nutrients: NexusGenRootTypes['FoodNutrient'][]; // [FoodNutrient!]!
     portions: NexusGenRootTypes['Portion'][]; // [Portion!]!
     searchScore: number | null; // Float
-    servingSize: NexusGenRootTypes['ServingSize'] | null; // ServingSize
   }
   FoodNutrient: { // field return type
     amount: number; // Float!
@@ -169,6 +166,7 @@ export interface NexusGenFieldTypes {
   Ingredient: { // field return type
     amount: number; // Float!
     food: NexusGenRootTypes['Food'] | null; // Food
+    foodId: number; // Int!
     id: number; // Int!
     measure: string; // String!
     order: number | null; // Int
@@ -199,11 +197,8 @@ export interface NexusGenFieldTypes {
     startDate: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Portion: { // field return type
-    description: string | null; // String
     gramWeight: number; // Float!
-    measure: string | null; // String
-    order: number | null; // Int
-    unit: string | null; // String
+    measure: string; // String!
   }
   Query: { // field return type
     food: NexusGenRootTypes['Food'] | null; // Food
@@ -238,7 +233,6 @@ export interface NexusGenFieldTypeNames {
     nutrients: 'FoodNutrient'
     portions: 'Portion'
     searchScore: 'Float'
-    servingSize: 'ServingSize'
   }
   FoodNutrient: { // field return type name
     amount: 'Float'
@@ -249,6 +243,7 @@ export interface NexusGenFieldTypeNames {
   Ingredient: { // field return type name
     amount: 'Float'
     food: 'Food'
+    foodId: 'Int'
     id: 'Int'
     measure: 'String'
     order: 'Int'
@@ -279,11 +274,8 @@ export interface NexusGenFieldTypeNames {
     startDate: 'DateTime'
   }
   Portion: { // field return type name
-    description: 'String'
     gramWeight: 'Float'
     measure: 'String'
-    order: 'Int'
-    unit: 'String'
   }
   Query: { // field return type name
     food: 'Food'

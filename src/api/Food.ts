@@ -56,32 +56,9 @@ export const Food = objectType({
     t.string("brandName")
     t.float("searchScore")
 
-    t.field("servingSize", {
-      type: ServingSize,
-      resolve: async ({ id }, _args, ctx) => {
-        const food = await ctx.db.food.findUnique({ where: { id } })
-
-        if (
-          !food ||
-          !food.servingSize ||
-          !food.servingSizeUnit ||
-          !food.servingSizeDescription
-        ) {
-          return null
-        }
-
-        return {
-          amount: food.servingSize,
-          description: food.servingSizeDescription,
-          unit: food.servingSizeUnit,
-        }
-      },
-    })
-
     t.nonNull.field("portions", {
       type: nonNull(list(nonNull("Portion"))),
-      resolve: ({ id }, _args, ctx) =>
-        ctx.db.food.findUnique({ where: { id } }).portions(),
+      resolve: ({ id }, _args, ctx) => FoodService.getPortionsForFood(id, ctx),
     })
 
     t.field("nutrients", {
@@ -105,12 +82,8 @@ export const Food = objectType({
 export const Portion = objectType({
   name: "Portion",
   definition(t) {
-    // TODO: consider combining these into a single field
-    t.string("unit")
-    t.string("measure")
-    t.string("description")
+    t.nonNull.string("measure")
     t.nonNull.float("gramWeight")
-    t.int("order")
   },
 })
 

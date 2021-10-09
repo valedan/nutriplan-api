@@ -33,7 +33,6 @@ type Food {
   nutrients: [FoodNutrient!]!
   portions: [Portion!]!
   searchScore: Float
-  servingSize: ServingSize
 }
 
 type FoodNutrient {
@@ -46,6 +45,7 @@ type FoodNutrient {
 type Ingredient {
   amount: Float!
   food: Food
+  foodId: Int!
   id: Int!
   measure: String!
   order: Int
@@ -90,11 +90,8 @@ type Plan {
 }
 
 type Portion {
-  description: String
   gramWeight: Float!
-  measure: String
-  order: Int
-  unit: String
+  measure: String!
 }
 
 type Query {

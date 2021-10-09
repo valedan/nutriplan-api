@@ -50,17 +50,20 @@ model Food {
 }
 
 model Portion {
-  id                 Int      @id @default(autoincrement())
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  food               Food     @relation(fields: [foodId], references: [id])
-  foodId             Int
-  sequenceNumber     Int      @default(1)
-  measureUnit        String
-  portionDescription String?
-  modifier           String?
-  gramWeight         Float
-  amount             Float
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  food           Food     @relation(fields: [foodId], references: [id])
+  foodId         Int
+  sequenceNumber Int      @default(1)
+
+  // The unit used for the measure (e.g. if measure is 3 tsp, the unit is tsp)
+  measureUnit String
+  // Foundation foods: Qualifier of the measure (e.g. related to food shape or form) (e.g. melted, crushed, diced). Survey (FNDDS) foods: The portion code. SR legacy foods: description of measures, including the unit of measure and the measure modifier (e.g. waffle round (4" dia)).
+  modifier    String?
+
+  gramWeight Float
+  amount     Float
 
   @@index([foodId])
 }
