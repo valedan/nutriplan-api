@@ -16,7 +16,7 @@ model Food {
   createdAt                      DateTime         @default(now())
   updatedAt                      DateTime         @updatedAt
   dataSource                     String
-  description                    String?
+  description                    String
   additionalDescriptions         String[]
   category                       String?
   brandOwner                     String?
@@ -38,7 +38,7 @@ model Food {
   fdcDataSource                  String?
   fdcModifiedDate                DateTime?
   fdcAvailableDate               DateTime?
-  nutrientCount                  Int?
+  nutrientCount                  Int              @default(0)
   inElasticsearch                Boolean          @default(false)
   foodNutrients                  FoodNutrient[]
   portions                       Portion[]

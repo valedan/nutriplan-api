@@ -51,10 +51,11 @@ export const Food = objectType({
     t.nonNull.int("id")
     t.nonNull.string("dataSource")
 
-    t.string("description")
+    t.nonNull.string("description")
     t.string("category")
     t.string("brandName")
     t.float("searchScore")
+    t.nonNull.int("nutrientCount")
 
     t.nonNull.field("portions", {
       type: nonNull(list(nonNull("Portion"))),

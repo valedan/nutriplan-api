@@ -90,8 +90,9 @@ export interface NexusGenObjects {
     brandName?: string | null; // String
     category?: string | null; // String
     dataSource: string; // String!
-    description?: string | null; // String
+    description: string; // String!
     id: number; // Int!
+    nutrientCount: number; // Int!
     searchScore?: number | null; // Float
   }
   FoodNutrient: { // root type
@@ -102,10 +103,9 @@ export interface NexusGenObjects {
   }
   Ingredient: { // root type
     amount: number; // Float!
-    foodId: number; // Int!
     id: number; // Int!
     measure: string; // String!
-    order?: number | null; // Int
+    order: number; // Int!
   }
   Meal: { // root type
     id: number; // Int!
@@ -151,8 +151,9 @@ export interface NexusGenFieldTypes {
     brandName: string | null; // String
     category: string | null; // String
     dataSource: string; // String!
-    description: string | null; // String
+    description: string; // String!
     id: number; // Int!
+    nutrientCount: number; // Int!
     nutrients: NexusGenRootTypes['FoodNutrient'][]; // [FoodNutrient!]!
     portions: NexusGenRootTypes['Portion'][]; // [Portion!]!
     searchScore: number | null; // Float
@@ -166,10 +167,9 @@ export interface NexusGenFieldTypes {
   Ingredient: { // field return type
     amount: number; // Float!
     food: NexusGenRootTypes['Food'] | null; // Food
-    foodId: number; // Int!
     id: number; // Int!
     measure: string; // String!
-    order: number | null; // Int
+    order: number; // Int!
   }
   Meal: { // field return type
     id: number; // Int!
@@ -230,6 +230,7 @@ export interface NexusGenFieldTypeNames {
     dataSource: 'String'
     description: 'String'
     id: 'Int'
+    nutrientCount: 'Int'
     nutrients: 'FoodNutrient'
     portions: 'Portion'
     searchScore: 'Float'
@@ -243,7 +244,6 @@ export interface NexusGenFieldTypeNames {
   Ingredient: { // field return type name
     amount: 'Float'
     food: 'Food'
-    foodId: 'Int'
     id: 'Int'
     measure: 'String'
     order: 'Int'

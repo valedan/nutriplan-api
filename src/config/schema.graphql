@@ -28,8 +28,9 @@ type Food {
   brandName: String
   category: String
   dataSource: String!
-  description: String
+  description: String!
   id: Int!
+  nutrientCount: Int!
   nutrients: [FoodNutrient!]!
   portions: [Portion!]!
   searchScore: Float
@@ -45,10 +46,9 @@ type FoodNutrient {
 type Ingredient {
   amount: Float!
   food: Food
-  foodId: Int!
   id: Int!
   measure: String!
-  order: Int
+  order: Int!
 }
 
 enum IngredientParent {

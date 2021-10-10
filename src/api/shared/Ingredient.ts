@@ -5,10 +5,9 @@ export const Ingredient = objectType({
   name: "Ingredient",
   definition(t) {
     t.nonNull.int("id")
-    t.nonNull.int("foodId")
     t.nonNull.float("amount")
     t.nonNull.string("measure")
-    t.int("order")
+    t.nonNull.int("order")
 
     t.field("food", {
       type: "Food",
