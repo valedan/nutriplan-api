@@ -122,7 +122,7 @@ describe("Querying a single plan", () => {
       result.data?.plan?.meals?.[0].ingredients[0].food.portions.map(
         ({ gramWeight }) => gramWeight
       )
-    ).toIncludeSameMembers(portions.map(({ gramWeight }) => gramWeight))
+    ).toIncludeAllMembers(portions.map(({ gramWeight }) => gramWeight))
 
     expect(result.data?.plan?.meals[0].recipe.name).toEqual(recipe.name)
     expect(result.data?.plan?.ingredients?.[0].food.id).toEqual(foods[1].id)

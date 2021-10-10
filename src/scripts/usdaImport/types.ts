@@ -23,6 +23,16 @@ export type SRLegacyFoodRow = {
   NDB_number: string
 }
 
+export type SRWeightRow = {
+  NDB_No: string
+  Seq: string
+  Amount: string
+  Msre_Desc: string
+  Gm_Wgt: string
+  Num_Data_Pts: string
+  Std_Dev: string
+}
+
 export type BrandedFoodRow = {
   fdc_id: string
   brand_owner: string

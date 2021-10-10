@@ -28,12 +28,12 @@ type Food {
   brandName: String
   category: String
   dataSource: String!
-  description: String
+  description: String!
   id: Int!
+  nutrientCount: Int!
   nutrients: [FoodNutrient!]!
   portions: [Portion!]!
   searchScore: Float
-  servingSize: ServingSize
 }
 
 type FoodNutrient {
@@ -48,7 +48,7 @@ type Ingredient {
   food: Food
   id: Int!
   measure: String!
-  order: Int
+  order: Int!
 }
 
 enum IngredientParent {
@@ -90,11 +90,8 @@ type Plan {
 }
 
 type Portion {
-  description: String
   gramWeight: Float!
-  measure: String
-  order: Int
-  unit: String
+  measure: String!
 }
 
 type Query {

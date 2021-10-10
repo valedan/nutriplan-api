@@ -26,8 +26,8 @@ const dataSources = [
 ]
 
 const foodBaseData = (): Prisma.FoodUncheckedCreateInput => ({
-  dataSource: _.sample(dataSources) || "",
-  description: _.sample(foodDescriptions),
+  dataSource: _.sample(dataSources) || "source",
+  description: _.sample(foodDescriptions) || "food",
 })
 
 export const createFood = (

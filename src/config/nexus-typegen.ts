@@ -90,8 +90,9 @@ export interface NexusGenObjects {
     brandName?: string | null; // String
     category?: string | null; // String
     dataSource: string; // String!
-    description?: string | null; // String
+    description: string; // String!
     id: number; // Int!
+    nutrientCount: number; // Int!
     searchScore?: number | null; // Float
   }
   FoodNutrient: { // root type
@@ -104,7 +105,7 @@ export interface NexusGenObjects {
     amount: number; // Float!
     id: number; // Int!
     measure: string; // String!
-    order?: number | null; // Int
+    order: number; // Int!
   }
   Meal: { // root type
     id: number; // Int!
@@ -119,11 +120,8 @@ export interface NexusGenObjects {
     startDate?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Portion: { // root type
-    description?: string | null; // String
     gramWeight: number; // Float!
-    measure?: string | null; // String
-    order?: number | null; // Int
-    unit?: string | null; // String
+    measure: string; // String!
   }
   Query: {};
   Recipe: { // root type
@@ -153,12 +151,12 @@ export interface NexusGenFieldTypes {
     brandName: string | null; // String
     category: string | null; // String
     dataSource: string; // String!
-    description: string | null; // String
+    description: string; // String!
     id: number; // Int!
+    nutrientCount: number; // Int!
     nutrients: NexusGenRootTypes['FoodNutrient'][]; // [FoodNutrient!]!
     portions: NexusGenRootTypes['Portion'][]; // [Portion!]!
     searchScore: number | null; // Float
-    servingSize: NexusGenRootTypes['ServingSize'] | null; // ServingSize
   }
   FoodNutrient: { // field return type
     amount: number; // Float!
@@ -171,7 +169,7 @@ export interface NexusGenFieldTypes {
     food: NexusGenRootTypes['Food'] | null; // Food
     id: number; // Int!
     measure: string; // String!
-    order: number | null; // Int
+    order: number; // Int!
   }
   Meal: { // field return type
     id: number; // Int!
@@ -199,11 +197,8 @@ export interface NexusGenFieldTypes {
     startDate: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Portion: { // field return type
-    description: string | null; // String
     gramWeight: number; // Float!
-    measure: string | null; // String
-    order: number | null; // Int
-    unit: string | null; // String
+    measure: string; // String!
   }
   Query: { // field return type
     food: NexusGenRootTypes['Food'] | null; // Food
@@ -235,10 +230,10 @@ export interface NexusGenFieldTypeNames {
     dataSource: 'String'
     description: 'String'
     id: 'Int'
+    nutrientCount: 'Int'
     nutrients: 'FoodNutrient'
     portions: 'Portion'
     searchScore: 'Float'
-    servingSize: 'ServingSize'
   }
   FoodNutrient: { // field return type name
     amount: 'Float'
@@ -279,11 +274,8 @@ export interface NexusGenFieldTypeNames {
     startDate: 'DateTime'
   }
   Portion: { // field return type name
-    description: 'String'
     gramWeight: 'Float'
     measure: 'String'
-    order: 'Int'
-    unit: 'String'
   }
   Query: { // field return type name
     food: 'Food'

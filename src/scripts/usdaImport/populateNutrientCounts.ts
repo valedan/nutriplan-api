@@ -40,7 +40,7 @@ const populateNutrientCounts = async (
   prisma = new PrismaClient()
 ): Promise<void> => {
   const baseQuery = {
-    where: { nutrientCount: null },
+    where: { nutrientCount: 0 },
     take: 10000,
     include: {
       _count: {

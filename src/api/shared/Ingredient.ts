@@ -7,7 +7,7 @@ export const Ingredient = objectType({
     t.nonNull.int("id")
     t.nonNull.float("amount")
     t.nonNull.string("measure")
-    t.int("order")
+    t.nonNull.int("order")
 
     t.field("food", {
       type: "Food",

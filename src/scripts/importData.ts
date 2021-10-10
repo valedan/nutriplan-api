@@ -9,6 +9,7 @@ import loadSRCategories from "./usdaImport/loadSRCategories"
 import flagHistoricalRecords from "./usdaImport/flagHistoricalRecords"
 import populateNutrientCounts from "./usdaImport/populateNutrientCounts"
 import removeDescriptionPhrases from "./usdaImport/removeDescriptionPhrases"
+import loadSRWeights from "./usdaImport/loadSRWeights"
 
 const prisma = new PrismaClient()
 
@@ -21,6 +22,7 @@ const importData = async () => {
   await loadFoodNutrientData(prisma)
   await loadPortionData(prisma)
   await loadSRCategories(prisma)
+  await loadSRWeights(prisma)
   await flagHistoricalRecords(prisma)
   await populateNutrientCounts(prisma)
   await removeDescriptionPhrases(prisma)
