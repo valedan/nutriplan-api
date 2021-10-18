@@ -7,6 +7,7 @@ import {
   stringArg,
   enumType,
   queryField,
+  extendType,
 } from "nexus"
 import FoodService from "../services/food"
 

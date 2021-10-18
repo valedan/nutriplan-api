@@ -80,6 +80,12 @@ type Mutation {
   updatePlan(input: UpdatePlanInput!): Plan
 }
 
+type Nutrient {
+  id: Int!
+  name: String!
+  unit: String!
+}
+
 type Plan {
   endDate: DateTime
   id: Int!
@@ -97,6 +103,7 @@ type Portion {
 type Query {
   food(id: Int!): Food
   foods(ids: [Int!]!): [Food!]!
+  nutrients: [Nutrient!]!
   plan(id: Int!): Plan
   plans: [Plan!]!
   recipe(id: Int!): Recipe

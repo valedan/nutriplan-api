@@ -113,6 +113,11 @@ export interface NexusGenObjects {
     servings: number; // Int!
   }
   Mutation: {};
+  Nutrient: { // root type
+    id: number; // Int!
+    name: string; // String!
+    unit: string; // String!
+  }
   Plan: { // root type
     endDate?: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
@@ -188,6 +193,11 @@ export interface NexusGenFieldTypes {
     updateIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     updatePlan: NexusGenRootTypes['Plan'] | null; // Plan
   }
+  Nutrient: { // field return type
+    id: number; // Int!
+    name: string; // String!
+    unit: string; // String!
+  }
   Plan: { // field return type
     endDate: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
@@ -203,6 +213,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     food: NexusGenRootTypes['Food'] | null; // Food
     foods: NexusGenRootTypes['Food'][]; // [Food!]!
+    nutrients: NexusGenRootTypes['Nutrient'][]; // [Nutrient!]!
     plan: NexusGenRootTypes['Plan'] | null; // Plan
     plans: NexusGenRootTypes['Plan'][]; // [Plan!]!
     recipe: NexusGenRootTypes['Recipe'] | null; // Recipe
@@ -265,6 +276,11 @@ export interface NexusGenFieldTypeNames {
     updateIngredient: 'Ingredient'
     updatePlan: 'Plan'
   }
+  Nutrient: { // field return type name
+    id: 'Int'
+    name: 'String'
+    unit: 'String'
+  }
   Plan: { // field return type name
     endDate: 'DateTime'
     id: 'Int'
@@ -280,6 +296,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     food: 'Food'
     foods: 'Food'
+    nutrients: 'Nutrient'
     plan: 'Plan'
     plans: 'Plan'
     recipe: 'Recipe'
