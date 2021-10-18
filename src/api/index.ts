@@ -1,5 +1,6 @@
 export * from "./Food"
 export * from "./Ingredient"
+export * from "./Nutrient"
 export * from "./Plan"
 export * from "./Recipe"
 export * from "./shared"
