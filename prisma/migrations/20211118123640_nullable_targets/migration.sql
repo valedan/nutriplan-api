@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "NutrientTarget" ALTER COLUMN "min" DROP NOT NULL,
+ALTER COLUMN "max" DROP NOT NULL;

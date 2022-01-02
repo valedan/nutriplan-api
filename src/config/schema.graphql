@@ -86,13 +86,33 @@ type Nutrient {
   unit: String!
 }
 
+type NutrientProfile {
+  createdAt: DateTime!
+  id: Int!
+  isActive: Boolean!
+  name: String!
+  nutrientTargets: [NutrientTarget!]!
+  updatedAt: DateTime!
+}
+
+type NutrientTarget {
+  createdAt: DateTime!
+  id: Int!
+  max: Float
+  min: Float
+  nutrient: Nutrient!
+  updatedAt: DateTime!
+}
+
 type Plan {
+  createdAt: DateTime!
   endDate: DateTime
   id: Int!
   ingredients: [Ingredient!]!
   meals: [Meal!]!
   name: String
   startDate: DateTime
+  updatedAt: DateTime!
 }
 
 type Portion {
@@ -101,6 +121,7 @@ type Portion {
 }
 
 type Query {
+  activeNutrientProfile: NutrientProfile!
   food(id: Int!): Food
   foods(ids: [Int!]!): [Food!]!
   nutrients: [Nutrient!]!
@@ -147,4 +168,10 @@ input UpdatePlanInput {
   id: Int!
   name: String
   startDate: DateTime
+}
+
+input UpdateTargetInput {
+  id: Int!
+  max: Float
+  min: Float
 }

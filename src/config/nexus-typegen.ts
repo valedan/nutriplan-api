@@ -68,6 +68,11 @@ export interface NexusGenInputs {
     name?: string | null; // String
     startDate?: NexusGenScalars['DateTime'] | null; // DateTime
   }
+  UpdateTargetInput: { // input type
+    id: number; // Int!
+    max?: number | null; // Float
+    min?: number | null; // Float
+  }
 }
 
 export interface NexusGenEnums {
@@ -118,11 +123,27 @@ export interface NexusGenObjects {
     name: string; // String!
     unit: string; // String!
   }
+  NutrientProfile: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    isActive: boolean; // Boolean!
+    name: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  NutrientTarget: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    max?: number | null; // Float
+    min?: number | null; // Float
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
   Plan: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     endDate?: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
     name?: string | null; // String
     startDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Portion: { // root type
     gramWeight: number; // Float!
@@ -198,19 +219,38 @@ export interface NexusGenFieldTypes {
     name: string; // String!
     unit: string; // String!
   }
+  NutrientProfile: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    isActive: boolean; // Boolean!
+    name: string; // String!
+    nutrientTargets: NexusGenRootTypes['NutrientTarget'][]; // [NutrientTarget!]!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  NutrientTarget: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    max: number | null; // Float
+    min: number | null; // Float
+    nutrient: NexusGenRootTypes['Nutrient']; // Nutrient!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
   Plan: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     endDate: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
     ingredients: NexusGenRootTypes['Ingredient'][]; // [Ingredient!]!
     meals: NexusGenRootTypes['Meal'][]; // [Meal!]!
     name: string | null; // String
     startDate: NexusGenScalars['DateTime'] | null; // DateTime
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Portion: { // field return type
     gramWeight: number; // Float!
     measure: string; // String!
   }
   Query: { // field return type
+    activeNutrientProfile: NexusGenRootTypes['NutrientProfile']; // NutrientProfile!
     food: NexusGenRootTypes['Food'] | null; // Food
     foods: NexusGenRootTypes['Food'][]; // [Food!]!
     nutrients: NexusGenRootTypes['Nutrient'][]; // [Nutrient!]!
@@ -281,19 +321,38 @@ export interface NexusGenFieldTypeNames {
     name: 'String'
     unit: 'String'
   }
+  NutrientProfile: { // field return type name
+    createdAt: 'DateTime'
+    id: 'Int'
+    isActive: 'Boolean'
+    name: 'String'
+    nutrientTargets: 'NutrientTarget'
+    updatedAt: 'DateTime'
+  }
+  NutrientTarget: { // field return type name
+    createdAt: 'DateTime'
+    id: 'Int'
+    max: 'Float'
+    min: 'Float'
+    nutrient: 'Nutrient'
+    updatedAt: 'DateTime'
+  }
   Plan: { // field return type name
+    createdAt: 'DateTime'
     endDate: 'DateTime'
     id: 'Int'
     ingredients: 'Ingredient'
     meals: 'Meal'
     name: 'String'
     startDate: 'DateTime'
+    updatedAt: 'DateTime'
   }
   Portion: { // field return type name
     gramWeight: 'Float'
     measure: 'String'
   }
   Query: { // field return type name
+    activeNutrientProfile: 'NutrientProfile'
     food: 'Food'
     foods: 'Food'
     nutrients: 'Nutrient'

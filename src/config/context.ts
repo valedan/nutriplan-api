@@ -1,6 +1,7 @@
 import { ExpressContext } from "apollo-server-express"
 import { PrismaClient } from "@prisma/client"
 import verifyToken from "../services/auth/verifyToken"
+import getActiveProfileOrCreateDefault from "../services/nutrient/profiles/getActiveProfileOrCreateDefault"
 import { User } from "../types/User"
 import db from "./db"
 
@@ -26,6 +27,8 @@ export const context = async ({
     if (payload?.sub) {
       isAuthenticated = true
       user.id = payload.sub
+      // TODO: This is a mildly expensive operation, do it at the resolver level when user hits an endpoint that needs a profile
+      await getActiveProfileOrCreateDefault(user.id, db)
     }
   }
 
