@@ -135,7 +135,7 @@ describe("Querying a single plan", () => {
     })
 
     expect(result.errors).toBeDefined()
-    expect(result.data?.plan).toBeNull()
+    expect(result.errors?.[0].message).toMatchInlineSnapshot(`"Plan not found"`)
   })
 
   it("returns an error if plan belongs to another user", async () => {
@@ -145,7 +145,7 @@ describe("Querying a single plan", () => {
     })
 
     expect(result.errors).toBeDefined()
-    expect(result.data?.plan).toBeNull()
+    expect(result.errors?.[0].message).toMatchInlineSnapshot(`"Plan not found"`)
   })
 })
 
@@ -218,7 +218,9 @@ describe("Creating a new plan", () => {
     })
 
     expect(result.errors).toBeDefined()
-    expect(result.data).toBeUndefined()
+    expect(result.errors?.[0].message).toMatchInlineSnapshot(
+      `"Variable \\"$input\\" of required type \\"CreatePlanInput!\\" was not provided."`
+    )
   })
 })
 
@@ -284,7 +286,7 @@ describe("Updating a plan", () => {
       },
     })
     expect(result.errors).toBeDefined()
-    expect(result.data?.updatePlan).toBeNull()
+    expect(result.errors?.[0].message).toMatchInlineSnapshot(`"Plan not found"`)
   })
 
   it("returns null if plan belongs to another user", async () => {
@@ -298,7 +300,7 @@ describe("Updating a plan", () => {
       },
     })
     expect(result.errors).toBeDefined()
-    expect(result.data?.updatePlan).toBeNull()
+    expect(result.errors?.[0].message).toMatchInlineSnapshot(`"Plan not found"`)
   })
 })
 
@@ -340,7 +342,7 @@ describe("Deleting a plan", () => {
     })
 
     expect(result.errors).toBeDefined()
-    expect(result.data?.deletePlan).toBeNull()
+    expect(result.errors?.[0].message).toMatchInlineSnapshot(`"Plan not found"`)
   })
 
   it("returns null if plan belongs to another user", async () => {
@@ -352,6 +354,6 @@ describe("Deleting a plan", () => {
     })
 
     expect(result.errors).toBeDefined()
-    expect(result.data?.deletePlan).toBeNull()
+    expect(result.errors?.[0].message).toMatchInlineSnapshot(`"Plan not found"`)
   })
 })

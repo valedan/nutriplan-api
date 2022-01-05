@@ -23,3 +23,10 @@ export const NutrientProfile = objectType({
     })
   },
 })
+
+// Fleshed out profile resolver not needed for MVP:
+// view all profiles
+// view profile by id
+// create new profile
+// update profile (name, isActive)
+// delete profile
