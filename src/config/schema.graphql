@@ -78,6 +78,7 @@ type Mutation {
   reorderIngredients(input: ReorderIngredientsInput!): [Ingredient]
   updateIngredient(input: UpdateIngredientInput!): Ingredient
   updatePlan(input: UpdatePlanInput!): Plan
+  updateTarget(input: UpdateTargetInput!): NutrientTarget
 }
 
 type Nutrient {

@@ -213,6 +213,7 @@ export interface NexusGenFieldTypes {
     reorderIngredients: Array<NexusGenRootTypes['Ingredient'] | null> | null; // [Ingredient]
     updateIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     updatePlan: NexusGenRootTypes['Plan'] | null; // Plan
+    updateTarget: NexusGenRootTypes['NutrientTarget'] | null; // NutrientTarget
   }
   Nutrient: { // field return type
     id: number; // Int!
@@ -315,6 +316,7 @@ export interface NexusGenFieldTypeNames {
     reorderIngredients: 'Ingredient'
     updateIngredient: 'Ingredient'
     updatePlan: 'Plan'
+    updateTarget: 'NutrientTarget'
   }
   Nutrient: { // field return type name
     id: 'Int'
@@ -398,6 +400,9 @@ export interface NexusGenArgTypes {
     }
     updatePlan: { // args
       input: NexusGenInputs['UpdatePlanInput']; // UpdatePlanInput!
+    }
+    updateTarget: { // args
+      input: NexusGenInputs['UpdateTargetInput']; // UpdateTargetInput!
     }
   }
   Query: {

@@ -1,11 +1,5 @@
-import {
-  objectType,
-  nonNull,
-  list,
-  mutationField,
-  inputObjectType,
-} from "nexus"
-// import TargetService from "../services/nutrient/targets"
+import { objectType, nonNull, mutationField, inputObjectType } from "nexus"
+import TargetService from "../services/nutrient/targets"
 
 export const UpdateTargetInput = inputObjectType({
   name: "UpdateTargetInput",
@@ -16,11 +10,16 @@ export const UpdateTargetInput = inputObjectType({
   },
 })
 
-// export const updateTarget = mutationField("updateTarget", {
-//   type: "NutrientTarget",
-//   args: { input: nonNull(UpdateTargetInput) },
-//   // resolve: (_root, { input }, ctx) => TargetService.updateTarget(input, ctx),
-// })
+export const updateTarget = mutationField("updateTarget", {
+  type: "NutrientTarget",
+  args: { input: nonNull(UpdateTargetInput) },
+  resolve: (_root, { input }, ctx) =>
+    TargetService.updateTarget({
+      ...input,
+      db: ctx.db,
+      userId: ctx.auth.user.id,
+    }),
+})
 
 export const NutrientTarget = objectType({
   name: "NutrientTarget",
@@ -47,3 +46,6 @@ export const NutrientTarget = objectType({
     })
   },
 })
+
+// Needed later
+// Some way to reset to default. Maybe default associated with the nutrients that the frontend can fetch
