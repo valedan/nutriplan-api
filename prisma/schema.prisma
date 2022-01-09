@@ -73,10 +73,23 @@ model Nutrient {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   name            String
+  displayName     String?
+  order           Int?
   nutrientNumber  Int
+  nutrientGroupId Int?
   unit            NutrientUnit
   foodNutrients   FoodNutrient[]
   nutrientTargets NutrientTarget[]
+  nutrientGroup   NutrientGroup? @relation(fields: [nutrientGroupId], references: [id])
+}
+
+model NutrientGroup {
+  id              Int              @id @default(autoincrement())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String
+  order       Int
+  nutrients       Nutrient[]
 }
 
 model NutrientProfile {

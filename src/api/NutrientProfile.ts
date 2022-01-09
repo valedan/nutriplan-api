@@ -1,5 +1,5 @@
 import { objectType, nonNull, list, queryField } from "nexus"
-import ProfileService from "../services/nutrient/profiles"
+import ProfileService from "../services/nutrientProfile"
 
 export const getActiveProfile = queryField("activeNutrientProfile", {
   type: nonNull("NutrientProfile"),

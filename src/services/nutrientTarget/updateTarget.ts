@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 import { NutrientTarget } from ".prisma/client"
-import { NotFoundError } from "../../../api/shared/errors"
+import { NotFoundError } from "../../api/shared/errors"
 
 interface UpdateTargetInput {
   db: PrismaClient
