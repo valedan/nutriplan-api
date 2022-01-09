@@ -119,9 +119,16 @@ export interface NexusGenObjects {
   }
   Mutation: {};
   Nutrient: { // root type
+    displayName?: string | null; // String
     id: number; // Int!
     name: string; // String!
+    order?: number | null; // Int
     unit: string; // String!
+  }
+  NutrientGroup: { // root type
+    id: number; // Int!
+    name: string; // String!
+    order: number; // Int!
   }
   NutrientProfile: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -216,9 +223,17 @@ export interface NexusGenFieldTypes {
     updateTarget: NexusGenRootTypes['NutrientTarget'] | null; // NutrientTarget
   }
   Nutrient: { // field return type
+    displayName: string | null; // String
     id: number; // Int!
     name: string; // String!
+    order: number | null; // Int
     unit: string; // String!
+  }
+  NutrientGroup: { // field return type
+    id: number; // Int!
+    name: string; // String!
+    nutrients: NexusGenRootTypes['Nutrient'][]; // [Nutrient!]!
+    order: number; // Int!
   }
   NutrientProfile: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -254,6 +269,7 @@ export interface NexusGenFieldTypes {
     activeNutrientProfile: NexusGenRootTypes['NutrientProfile']; // NutrientProfile!
     food: NexusGenRootTypes['Food'] | null; // Food
     foods: NexusGenRootTypes['Food'][]; // [Food!]!
+    nutrientGroups: NexusGenRootTypes['NutrientGroup'][]; // [NutrientGroup!]!
     nutrients: NexusGenRootTypes['Nutrient'][]; // [Nutrient!]!
     plan: NexusGenRootTypes['Plan'] | null; // Plan
     plans: NexusGenRootTypes['Plan'][]; // [Plan!]!
@@ -319,9 +335,17 @@ export interface NexusGenFieldTypeNames {
     updateTarget: 'NutrientTarget'
   }
   Nutrient: { // field return type name
+    displayName: 'String'
     id: 'Int'
     name: 'String'
+    order: 'Int'
     unit: 'String'
+  }
+  NutrientGroup: { // field return type name
+    id: 'Int'
+    name: 'String'
+    nutrients: 'Nutrient'
+    order: 'Int'
   }
   NutrientProfile: { // field return type name
     createdAt: 'DateTime'
@@ -357,6 +381,7 @@ export interface NexusGenFieldTypeNames {
     activeNutrientProfile: 'NutrientProfile'
     food: 'Food'
     foods: 'Food'
+    nutrientGroups: 'NutrientGroup'
     nutrients: 'Nutrient'
     plan: 'Plan'
     plans: 'Plan'

@@ -1,7 +1,7 @@
 import { ExpressContext } from "apollo-server-express"
 import { PrismaClient } from "@prisma/client"
 import verifyToken from "../services/auth/verifyToken"
-import getActiveProfileOrCreateDefault from "../services/nutrient/profiles/getActiveProfileOrCreateDefault"
+import getActiveProfileOrCreateDefault from "../services/nutrientProfile/getActiveProfileOrCreateDefault"
 import { User } from "../types/User"
 import db from "./db"
 

@@ -1,5 +1,5 @@
 import { objectType, nonNull, mutationField, inputObjectType } from "nexus"
-import TargetService from "../services/nutrient/targets"
+import TargetService from "../services/nutrientTarget"
 
 export const UpdateTargetInput = inputObjectType({
   name: "UpdateTargetInput",

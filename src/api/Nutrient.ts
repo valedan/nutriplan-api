@@ -12,5 +12,7 @@ export const Nutrient = objectType({
     t.nonNull.int("id")
     t.nonNull.string("name")
     t.nonNull.string("unit")
+    t.string("displayName")
+    t.int("order")
   },
 })
