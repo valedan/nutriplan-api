@@ -82,9 +82,18 @@ type Mutation {
 }
 
 type Nutrient {
+  displayName: String
   id: Int!
   name: String!
+  order: Int
   unit: String!
+}
+
+type NutrientGroup {
+  id: Int!
+  name: String!
+  nutrients: [Nutrient!]!
+  order: Int!
 }
 
 type NutrientProfile {
@@ -125,6 +134,7 @@ type Query {
   activeNutrientProfile: NutrientProfile!
   food(id: Int!): Food
   foods(ids: [Int!]!): [Food!]!
+  nutrientGroups: [NutrientGroup!]!
   nutrients: [Nutrient!]!
   plan(id: Int!): Plan
   plans: [Plan!]!
