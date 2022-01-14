@@ -223,6 +223,7 @@ export interface NexusGenFieldTypes {
     updateTarget: NexusGenRootTypes['NutrientTarget'] | null; // NutrientTarget
   }
   Nutrient: { // field return type
+    activeTarget: NexusGenRootTypes['NutrientTarget']; // NutrientTarget!
     displayName: string | null; // String
     id: number; // Int!
     name: string; // String!
@@ -335,6 +336,7 @@ export interface NexusGenFieldTypeNames {
     updateTarget: 'NutrientTarget'
   }
   Nutrient: { // field return type name
+    activeTarget: 'NutrientTarget'
     displayName: 'String'
     id: 'Int'
     name: 'String'
