@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client"
+import { format } from "sql-formatter"
+import chalk from "chalk"
 
 const prisma = new PrismaClient({
   log: [
@@ -23,8 +25,8 @@ const prisma = new PrismaClient({
 
 prisma.$on("query", (e) => {
   if (process.env.NODE_ENV === "development") {
-    console.log(`Query: ${e.query}`)
-    console.log(`Duration: ${e.duration}ms`)
+    console.log(format(e.query, { language: "postgresql" }))
+    console.log(chalk.underline(`Duration: ${e.duration}ms\n`))
   }
 })
 

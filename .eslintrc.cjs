@@ -27,6 +27,7 @@ module.exports = {
     "no-underscore-dangle": "off",
     "no-console": "off",
     "import/prefer-default-export": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "no-restricted-syntax": [
       // Remove for/of restriction because they're useful for async iteration
       // https://github.com/airbnb/javascript/issues/1271#issuecomment-548688952
