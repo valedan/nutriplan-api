@@ -7,7 +7,6 @@ const getActiveProfile = async (
 ): Promise<NutrientProfile | null> => {
   const profiles = await db.nutrientProfile.findMany({
     where: { userId },
-    include: { nutrientTargets: true },
   })
 
   const activeProfile = profiles.find((profile) => profile.isActive)

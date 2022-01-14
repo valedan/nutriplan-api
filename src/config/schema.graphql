@@ -82,6 +82,7 @@ type Mutation {
 }
 
 type Nutrient {
+  activeTarget: NutrientTarget!
   displayName: String
   id: Int!
   name: String!

@@ -1,9 +1,11 @@
 import { ExpressContext } from "apollo-server-express"
 import { PrismaClient } from "@prisma/client"
+import chalk from "chalk"
 import verifyToken from "../services/auth/verifyToken"
 import getActiveProfileOrCreateDefault from "../services/nutrientProfile/getActiveProfileOrCreateDefault"
 import { User } from "../types/User"
 import db from "./db"
+import { createLoaders } from "../dataLoaders"
 
 export interface MyContext extends ExpressContext {
   db: PrismaClient
@@ -11,12 +13,17 @@ export interface MyContext extends ExpressContext {
     isAuthenticated: boolean
     user: User
   }
+  loaders: ReturnType<typeof createLoaders>
 }
 
 export const context = async ({
   req,
   ...rest
 }: ExpressContext): Promise<MyContext> => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  if (req.body.operationName !== "IntrospectionQuery") {
+    console.log(chalk.cyanBright.bold("\nRECEIVED REQUEST"))
+  }
   let isAuthenticated = false
   const user: User = { id: "" }
   const authHeader = req.headers?.authorization || ""
@@ -37,10 +44,13 @@ export const context = async ({
     // throw new AuthenticationError("Not authenticated")
   }
 
+  const loaders = createLoaders(db, user.id)
+
   return {
     ...rest,
     db,
     req,
     auth: { isAuthenticated, user },
+    loaders,
   }
 }
