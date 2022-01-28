@@ -103,8 +103,7 @@ export interface NexusGenObjects {
   FoodNutrient: { // root type
     amount: number; // Float!
     id: number; // Int!
-    name: string; // String!
-    unit: string; // String!
+    nutrient: NexusGenRootTypes['Nutrient']; // Nutrient!
   }
   Ingredient: { // root type
     amount: number; // Float!
@@ -185,17 +184,16 @@ export interface NexusGenFieldTypes {
     category: string | null; // String
     dataSource: string; // String!
     description: string; // String!
+    foodNutrients: NexusGenRootTypes['FoodNutrient'][]; // [FoodNutrient!]!
     id: number; // Int!
     nutrientCount: number; // Int!
-    nutrients: NexusGenRootTypes['FoodNutrient'][]; // [FoodNutrient!]!
     portions: NexusGenRootTypes['Portion'][]; // [Portion!]!
     searchScore: number | null; // Float
   }
   FoodNutrient: { // field return type
     amount: number; // Float!
     id: number; // Int!
-    name: string; // String!
-    unit: string; // String!
+    nutrient: NexusGenRootTypes['Nutrient']; // Nutrient!
   }
   Ingredient: { // field return type
     amount: number; // Float!
@@ -223,7 +221,7 @@ export interface NexusGenFieldTypes {
     updateTarget: NexusGenRootTypes['NutrientTarget'] | null; // NutrientTarget
   }
   Nutrient: { // field return type
-    activeTarget: NexusGenRootTypes['NutrientTarget']; // NutrientTarget!
+    activeTarget: NexusGenRootTypes['NutrientTarget'] | null; // NutrientTarget
     displayName: string | null; // String
     id: number; // Int!
     name: string; // String!
@@ -298,17 +296,16 @@ export interface NexusGenFieldTypeNames {
     category: 'String'
     dataSource: 'String'
     description: 'String'
+    foodNutrients: 'FoodNutrient'
     id: 'Int'
     nutrientCount: 'Int'
-    nutrients: 'FoodNutrient'
     portions: 'Portion'
     searchScore: 'Float'
   }
   FoodNutrient: { // field return type name
     amount: 'Float'
     id: 'Int'
-    name: 'String'
-    unit: 'String'
+    nutrient: 'Nutrient'
   }
   Ingredient: { // field return type name
     amount: 'Float'
