@@ -29,9 +29,9 @@ type Food {
   category: String
   dataSource: String!
   description: String!
+  foodNutrients: [FoodNutrient!]!
   id: Int!
   nutrientCount: Int!
-  nutrients: [FoodNutrient!]!
   portions: [Portion!]!
   searchScore: Float
 }
@@ -39,8 +39,7 @@ type Food {
 type FoodNutrient {
   amount: Float!
   id: Int!
-  name: String!
-  unit: String!
+  nutrient: Nutrient!
 }
 
 type Ingredient {
@@ -82,7 +81,7 @@ type Mutation {
 }
 
 type Nutrient {
-  activeTarget: NutrientTarget!
+  activeTarget: NutrientTarget
   displayName: String
   id: Int!
   name: String!

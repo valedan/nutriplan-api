@@ -16,7 +16,7 @@ export const Nutrient = objectType({
     t.int("order")
 
     t.field("activeTarget", {
-      type: nonNull("NutrientTarget"),
+      type: "NutrientTarget",
       resolve: async ({ id }, _args, ctx) => {
         const activeProfile = await ctx.loaders.activeProfile.load("not used")
         return ctx.loaders.targetsByNutrientAndProfile.load({
