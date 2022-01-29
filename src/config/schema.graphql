@@ -14,6 +14,11 @@ input CreatePlanInput {
   startDate: DateTime!
 }
 
+input CreateRecipeInput {
+  name: String!
+  servings: Int!
+}
+
 """
 A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -72,11 +77,14 @@ type Meal {
 type Mutation {
   addIngredient(input: AddIngredientInput!): Ingredient
   createPlan(input: CreatePlanInput!): Plan
+  createRecipe(input: CreateRecipeInput!): Recipe
   deletePlan(id: Int!): Plan
+  deleteRecipe(id: Int!): Recipe
   removeIngredient(id: Int!): Ingredient
   reorderIngredients(input: ReorderIngredientsInput!): [Ingredient]
   updateIngredient(input: UpdateIngredientInput!): Ingredient
   updatePlan(input: UpdatePlanInput!): Plan
+  updateRecipe(input: UpdateRecipeInput!): Recipe
   updateTarget(input: UpdateTargetInput!): NutrientTarget
 }
 
@@ -139,16 +147,18 @@ type Query {
   plan(id: Int!): Plan
   plans: [Plan!]!
   recipe(id: Int!): Recipe
-  recipes(ids: [Int!]!): [Recipe!]!
+  recipes: [Recipe!]!
   searchFoods(searchTerm: String!): [Food]
 }
 
 type Recipe {
+  createdAt: DateTime!
   id: Int!
   ingredients: [Ingredient!]!
   meals: [Meal!]!
   name: String
   servings: Int
+  updatedAt: DateTime!
 }
 
 input ReorderIngredientsInput {
@@ -179,6 +189,12 @@ input UpdatePlanInput {
   id: Int!
   name: String
   startDate: DateTime
+}
+
+input UpdateRecipeInput {
+  id: Int!
+  name: String
+  servings: Int
 }
 
 input UpdateTargetInput {
