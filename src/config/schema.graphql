@@ -8,6 +8,11 @@ input AddIngredientInput {
   recipeId: Int
 }
 
+input AddMealInput {
+  planId: Int!
+  recipeId: Int!
+}
+
 input CreatePlanInput {
   endDate: DateTime!
   name: String!
@@ -68,21 +73,30 @@ input IngredientReorder {
 type Meal {
   id: Int!
   ingredients: [Ingredient!]!
-  order: Int
+  order: Int!
   plan: Plan
   recipe: Recipe
   servings: Int!
 }
 
+input MealReorder {
+  id: Int!
+  newOrder: Int!
+}
+
 type Mutation {
   addIngredient(input: AddIngredientInput!): Ingredient
+  addMeal(input: AddMealInput!): Meal
   createPlan(input: CreatePlanInput!): Plan
   createRecipe(input: CreateRecipeInput!): Recipe
   deletePlan(id: Int!): Plan
   deleteRecipe(id: Int!): Recipe
   removeIngredient(id: Int!): Ingredient
+  removeMeal(id: Int!): Meal
   reorderIngredients(input: ReorderIngredientsInput!): [Ingredient]
+  reorderMeals(input: ReorderMealsInput!): [Meal]
   updateIngredient(input: UpdateIngredientInput!): Ingredient
+  updateMeal(input: UpdateMealInput!): Meal
   updatePlan(input: UpdatePlanInput!): Plan
   updateRecipe(input: UpdateRecipeInput!): Recipe
   updateTarget(input: UpdateTargetInput!): NutrientTarget
@@ -167,6 +181,11 @@ input ReorderIngredientsInput {
   reorders: [IngredientReorder!]!
 }
 
+input ReorderMealsInput {
+  parentId: Int!
+  reorders: [MealReorder!]!
+}
+
 type ServingSize {
   amount: Float!
   description: String!
@@ -182,6 +201,11 @@ input UpdateIngredientInput {
   amount: Float
   id: Int!
   measure: String
+}
+
+input UpdateMealInput {
+  id: Int!
+  servings: Int
 }
 
 input UpdatePlanInput {

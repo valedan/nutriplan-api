@@ -89,30 +89,3 @@ export const Plan = objectType({
     })
   },
 })
-
-export const Meal = objectType({
-  name: "Meal",
-  definition(t) {
-    t.nonNull.int("id")
-    t.nonNull.int("servings")
-    t.int("order")
-
-    t.field("ingredients", {
-      type: nonNull(list(nonNull("Ingredient"))),
-      resolve: ({ id }, _args, ctx) =>
-        ctx.db.meal.findUnique({ where: { id } }).ingredients(),
-    })
-
-    t.field("recipe", {
-      type: "Recipe",
-      resolve: ({ id }, _args, ctx) =>
-        ctx.db.meal.findUnique({ where: { id } }).recipe(),
-    })
-
-    t.field("plan", {
-      type: "Plan",
-      resolve: ({ id }, _args, ctx) =>
-        ctx.db.meal.findUnique({ where: { id } }).plan(),
-    })
-  },
-})
