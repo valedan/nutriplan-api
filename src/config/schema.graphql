@@ -39,7 +39,7 @@ type Food {
   category: String
   dataSource: String!
   description: String!
-  foodNutrients: [FoodNutrient!]!
+  foodNutrients(nutrientIds: [Int!]): [FoodNutrient!]!
   id: Int!
   nutrientCount: Int!
   portions: [Portion!]!
@@ -54,7 +54,7 @@ type FoodNutrient {
 
 type Ingredient {
   amount: Float!
-  food: Food
+  food: Food!
   id: Int!
   measure: String!
   order: Int!
@@ -138,12 +138,12 @@ type NutrientTarget {
 
 type Plan {
   createdAt: DateTime!
-  endDate: DateTime
+  endDate: DateTime!
   id: Int!
   ingredients: [Ingredient!]!
   meals: [Meal!]!
   name: String
-  startDate: DateTime
+  startDate: DateTime!
   updatedAt: DateTime!
 }
 
@@ -156,8 +156,9 @@ type Query {
   activeNutrientProfile: NutrientProfile!
   food(id: Int!): Food
   foods(ids: [Int!]!): [Food!]!
+  nutrient(id: Int!): Nutrient
   nutrientGroups: [NutrientGroup!]!
-  nutrients: [Nutrient!]!
+  nutrients(ids: [Int!]): [Nutrient!]!
   plan(id: Int!): Plan
   plans: [Plan!]!
   recipe(id: Int!): Recipe

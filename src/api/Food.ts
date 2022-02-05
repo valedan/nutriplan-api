@@ -65,10 +65,16 @@ export const Food = objectType({
 
     t.field("foodNutrients", {
       type: nonNull(list(nonNull("FoodNutrient"))),
-      resolve: ({ id }, _args, ctx) =>
-        ctx.db.food
-          .findUnique({ where: { id } })
-          .foodNutrients({ include: { nutrient: true } }),
+      args: {
+        nutrientIds: list(nonNull(intArg())),
+      },
+      resolve: ({ id }, { nutrientIds }, ctx) =>
+        ctx.db.food.findUnique({ where: { id } }).foodNutrients({
+          include: { nutrient: true },
+          ...(nutrientIds && nutrientIds.length > 0
+            ? { where: { nutrientId: { in: nutrientIds } } }
+            : {}),
+        }),
     })
   },
 })

@@ -1,5 +1,7 @@
-import getAllNutrients from "./getAllNutrients"
+import getNutrients from "./getNutrients"
+import getNutrient from "./getNutrient"
 
 export default {
-  getAllNutrients,
+  getNutrients,
+  getNutrient,
 }

@@ -70,8 +70,8 @@ export const Plan = objectType({
   definition(t) {
     t.nonNull.int("id")
     t.string("name")
-    t.datetime("startDate")
-    t.datetime("endDate")
+    t.nonNull.datetime("startDate")
+    t.nonNull.datetime("endDate")
     t.nonNull.datetime("createdAt")
     // TODO: Adding or changing ingredients should touch the plan
     t.nonNull.datetime("updatedAt")

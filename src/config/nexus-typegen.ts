@@ -111,8 +111,8 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
-  Date: any
-  DateTime: any
+  Date: Date
+  DateTime: Date
 }
 
 export interface NexusGenObjects {
@@ -170,10 +170,10 @@ export interface NexusGenObjects {
   }
   Plan: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    endDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    endDate: NexusGenScalars['DateTime']; // DateTime!
     id: number; // Int!
     name?: string | null; // String
-    startDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    startDate: NexusGenScalars['DateTime']; // DateTime!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Portion: { // root type
@@ -224,7 +224,7 @@ export interface NexusGenFieldTypes {
   }
   Ingredient: { // field return type
     amount: number; // Float!
-    food: NexusGenRootTypes['Food'] | null; // Food
+    food: NexusGenRootTypes['Food']; // Food!
     id: number; // Int!
     measure: string; // String!
     order: number; // Int!
@@ -286,12 +286,12 @@ export interface NexusGenFieldTypes {
   }
   Plan: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    endDate: NexusGenScalars['DateTime'] | null; // DateTime
+    endDate: NexusGenScalars['DateTime']; // DateTime!
     id: number; // Int!
     ingredients: NexusGenRootTypes['Ingredient'][]; // [Ingredient!]!
     meals: NexusGenRootTypes['Meal'][]; // [Meal!]!
     name: string | null; // String
-    startDate: NexusGenScalars['DateTime'] | null; // DateTime
+    startDate: NexusGenScalars['DateTime']; // DateTime!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Portion: { // field return type
@@ -302,6 +302,7 @@ export interface NexusGenFieldTypes {
     activeNutrientProfile: NexusGenRootTypes['NutrientProfile']; // NutrientProfile!
     food: NexusGenRootTypes['Food'] | null; // Food
     foods: NexusGenRootTypes['Food'][]; // [Food!]!
+    nutrient: NexusGenRootTypes['Nutrient'] | null; // Nutrient
     nutrientGroups: NexusGenRootTypes['NutrientGroup'][]; // [NutrientGroup!]!
     nutrients: NexusGenRootTypes['Nutrient'][]; // [Nutrient!]!
     plan: NexusGenRootTypes['Plan'] | null; // Plan
@@ -423,6 +424,7 @@ export interface NexusGenFieldTypeNames {
     activeNutrientProfile: 'NutrientProfile'
     food: 'Food'
     foods: 'Food'
+    nutrient: 'Nutrient'
     nutrientGroups: 'NutrientGroup'
     nutrients: 'Nutrient'
     plan: 'Plan'
@@ -448,6 +450,11 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  Food: {
+    foodNutrients: { // args
+      nutrientIds?: number[] | null; // [Int!]
+    }
+  }
   Mutation: {
     addIngredient: { // args
       input: NexusGenInputs['AddIngredientInput']; // AddIngredientInput!
@@ -501,6 +508,12 @@ export interface NexusGenArgTypes {
     }
     foods: { // args
       ids: number[]; // [Int!]!
+    }
+    nutrient: { // args
+      id: number; // Int!
+    }
+    nutrients: { // args
+      ids?: number[] | null; // [Int!]
     }
     plan: { // args
       id: number; // Int!

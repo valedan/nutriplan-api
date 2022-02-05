@@ -3,7 +3,7 @@ import { join } from "path"
 import * as types from "../api"
 
 export default makeSchema({
-  types,
+  types: [types],
   outputs: {
     typegen: join(__dirname, "nexus-typegen.ts"),
     schema: join(__dirname, "schema.graphql"),
