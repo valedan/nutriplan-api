@@ -7,9 +7,9 @@ import {
   stringArg,
   enumType,
   queryField,
-  extendType,
 } from "nexus"
 import FoodService from "../services/food"
+import { NotFoundError } from "./shared/errors"
 
 export const getFood = queryField("food", {
   type: "Food",
@@ -69,12 +69,7 @@ export const Food = objectType({
         nutrientIds: list(nonNull(intArg())),
       },
       resolve: ({ id }, { nutrientIds }, ctx) =>
-        ctx.db.food.findUnique({ where: { id } }).foodNutrients({
-          include: { nutrient: true },
-          ...(nutrientIds && nutrientIds.length > 0
-            ? { where: { nutrientId: { in: nutrientIds } } }
-            : {}),
-        }),
+        FoodService.getFoodNutrientsForFood(ctx, id, nutrientIds),
     })
   },
 })
@@ -94,6 +89,18 @@ export const FoodNutrient = objectType({
     t.nonNull.float("amount")
     t.field("nutrient", {
       type: nonNull("Nutrient"),
+      resolve: async ({ id }, _args, ctx) => {
+        const nutrient = await ctx.db.foodNutrient
+          .findUnique({ where: { id } })
+          .nutrient()
+
+        if (!nutrient) {
+          throw new NotFoundError(
+            `Nutrient for FoodNutrient with id ${id} not found`
+          )
+        }
+        return nutrient
+      },
     })
   },
 })

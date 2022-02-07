@@ -128,7 +128,6 @@ export interface NexusGenObjects {
   FoodNutrient: { // root type
     amount: number; // Float!
     id: number; // Int!
-    nutrient: NexusGenRootTypes['Nutrient']; // Nutrient!
   }
   Ingredient: { // root type
     amount: number; // Float!
