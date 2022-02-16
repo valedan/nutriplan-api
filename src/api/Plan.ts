@@ -72,6 +72,9 @@ export const Plan = objectType({
     t.string("name")
     t.datetime("startDate")
     t.datetime("endDate")
+    t.nonNull.datetime("createdAt")
+    // TODO: Adding or changing ingredients should touch the plan
+    t.nonNull.datetime("updatedAt")
 
     t.field("meals", {
       type: nonNull(list(nonNull("Meal"))),

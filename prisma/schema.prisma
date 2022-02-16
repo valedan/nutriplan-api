@@ -69,13 +69,51 @@ model Portion {
 }
 
 model Nutrient {
-  id             Int            @id @default(autoincrement())
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  name           String
-  nutrientNumber Int
-  unit           NutrientUnit
-  foodNutrients  FoodNutrient[]
+  id              Int              @id @default(autoincrement())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String
+  displayName     String?
+  order           Int?
+  nutrientNumber  Int
+  nutrientGroupId Int?
+  unit            NutrientUnit
+  foodNutrients   FoodNutrient[]
+  nutrientTargets NutrientTarget[]
+  nutrientGroup   NutrientGroup? @relation(fields: [nutrientGroupId], references: [id])
+}
+
+model NutrientGroup {
+  id              Int              @id @default(autoincrement())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String
+  order       Int
+  nutrients       Nutrient[]
+}
+
+model NutrientProfile {
+  id              Int              @id @default(autoincrement())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  userId          String
+  name            String
+  isActive        Boolean          @default(false)
+  nutrientTargets NutrientTarget[]
+
+  @@index([userId])
+}
+
+model NutrientTarget {
+  id                Int             @id @default(autoincrement())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  nutrientProfile   NutrientProfile @relation(fields: [nutrientProfileId], references: [id])
+  nutrientProfileId Int
+  nutrient          Nutrient        @relation(fields: [nutrientId], references: [id])
+  nutrientId        Int
+  min               Float?
+  max               Float?
 }
 
 model FoodNutrient {
