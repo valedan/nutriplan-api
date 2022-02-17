@@ -21,13 +21,15 @@ const mockedElastic = mocked(ElasticClient, true)
 const server = createTestServer({ userId: "food_user" })
 
 const getFoodQuery = gql`
-  query getFood($id: Int!) {
+  query getFood($id: Int!, $nutrientIds: [Int!]) {
     food(id: $id) {
       id
       description
-      nutrients {
-        id
+      foodNutrients(nutrientIds: $nutrientIds) {
         amount
+        nutrient {
+          id
+        }
       }
       portions {
         measure
@@ -38,13 +40,15 @@ const getFoodQuery = gql`
 `
 
 const getFoodsQuery = gql`
-  query getFoods($ids: [Int!]!) {
+  query getFoods($ids: [Int!]!, $nutrientIds: [Int!]) {
     foods(ids: $ids) {
       id
       description
-      nutrients {
-        id
+      foodNutrients(nutrientIds: $nutrientIds) {
         amount
+        nutrient {
+          id
+        }
       }
       portions {
         gramWeight
@@ -54,13 +58,15 @@ const getFoodsQuery = gql`
 `
 
 const searchFoodsQuery = gql`
-  query ($searchTerm: String!) {
+  query ($searchTerm: String!, $nutrientIds: [Int!]) {
     searchFoods(searchTerm: $searchTerm) {
       id
       description
-      nutrients {
-        id
+      foodNutrients(nutrientIds: $nutrientIds) {
         amount
+        nutrient {
+          id
+        }
       }
       portions {
         gramWeight
@@ -112,13 +118,24 @@ beforeAll(async () => {
   ])
 })
 
+// TODO: test case of passing no nutrient ids and check that correct defaults are returned
 describe("Querying a single food", () => {
   it("returns the requested food", async () => {
     const result: GraphQLResponse & {
-      data?: { food?: NexusGenFieldTypes["Food"] } | null | undefined
+      data?:
+        | {
+            food?: Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            }
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: getFoodQuery,
-      variables: { id: foods[0].id },
+      variables: {
+        id: foods[0].id,
+        nutrientIds: [nutrients[0].id, nutrients[1].id],
+      },
     })
 
     expect(result.errors).toBeUndefined()
@@ -126,11 +143,11 @@ describe("Querying a single food", () => {
     expect(result.data?.food?.id).toEqual(foods[0].id)
 
     expect(
-      result.data?.food?.nutrients.map(({ id }) => id)
+      result.data?.food?.foodNutrients.map(({ nutrient }) => nutrient.id)
     ).toIncludeSameMembers(nutrients.map(({ id }) => id))
 
     expect(
-      result.data?.food?.nutrients.map(({ amount }) => amount)
+      result.data?.food?.foodNutrients.map(({ amount }) => amount)
     ).toIncludeSameMembers(foodNutrients.map(({ amount }) => amount))
 
     expect(
@@ -140,7 +157,14 @@ describe("Querying a single food", () => {
 
   it("includes all available portions", async () => {
     const result: GraphQLResponse & {
-      data?: { food?: NexusGenFieldTypes["Food"] } | null | undefined
+      data?:
+        | {
+            food?: Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            }
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: getFoodQuery,
       variables: { id: foods[2].id },
@@ -163,7 +187,14 @@ describe("Querying a single food", () => {
 
   it("returns an error if food is not found", async () => {
     const result: GraphQLResponse & {
-      data?: { food?: NexusGenFieldTypes["Food"] } | null | undefined
+      data?:
+        | {
+            food?: Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            }
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: getFoodQuery,
       variables: { id: 432423 },
@@ -177,10 +208,20 @@ describe("Querying a single food", () => {
 describe("Querying multiple foods", () => {
   it("returns the requested foods", async () => {
     const result: GraphQLResponse & {
-      data?: { foods?: NexusGenFieldTypes["Food"][] } | null | undefined
+      data?:
+        | {
+            foods?: (Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            })[]
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: getFoodsQuery,
-      variables: { ids: [foods[0].id, foods[1].id, 423423] },
+      variables: {
+        ids: [foods[0].id, foods[1].id, 423423],
+        nutrientIds: [nutrients[0].id, nutrients[1].id],
+      },
     })
 
     expect(result.errors).toBeUndefined()
@@ -193,7 +234,7 @@ describe("Querying multiple foods", () => {
     expect(
       result.data?.foods
         ?.find(({ id }) => id === foods[0].id)
-        ?.nutrients.map(({ id }) => id)
+        ?.foodNutrients.map(({ nutrient }) => nutrient.id)
     ).toIncludeSameMembers(nutrients.map(({ id }) => id))
   })
 })
@@ -208,10 +249,20 @@ describe("Searching for foods", () => {
     })
 
     const result: GraphQLResponse & {
-      data?: { searchFoods?: NexusGenFieldTypes["Food"][] } | null | undefined
+      data?:
+        | {
+            searchFoods?: (Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            })[]
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: searchFoodsQuery,
-      variables: { searchTerm: "test" },
+      variables: {
+        searchTerm: "test",
+        nutrientIds: [nutrients[0].id, nutrients[1].id],
+      },
     })
 
     expect(result.errors).toBeUndefined()
@@ -224,7 +275,7 @@ describe("Searching for foods", () => {
     expect(
       result.data?.searchFoods
         ?.find(({ id }) => id === foods[0].id)
-        ?.nutrients.map(({ id }) => id)
+        ?.foodNutrients.map(({ nutrient }) => nutrient.id)
     ).toIncludeSameMembers(nutrients.map(({ id }) => id))
   })
 })

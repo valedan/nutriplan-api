@@ -8,10 +8,20 @@ input AddIngredientInput {
   recipeId: Int
 }
 
+input AddMealInput {
+  planId: Int!
+  recipeId: Int!
+}
+
 input CreatePlanInput {
   endDate: DateTime!
   name: String!
   startDate: DateTime!
+}
+
+input CreateRecipeInput {
+  name: String!
+  servings: Int!
 }
 
 """
@@ -29,9 +39,9 @@ type Food {
   category: String
   dataSource: String!
   description: String!
+  foodNutrients(nutrientIds: [Int!]): [FoodNutrient!]!
   id: Int!
   nutrientCount: Int!
-  nutrients: [FoodNutrient!]!
   portions: [Portion!]!
   searchScore: Float
 }
@@ -39,13 +49,12 @@ type Food {
 type FoodNutrient {
   amount: Float!
   id: Int!
-  name: String!
-  unit: String!
+  nutrient: Nutrient!
 }
 
 type Ingredient {
   amount: Float!
-  food: Food
+  food: Food!
   id: Int!
   measure: String!
   order: Int!
@@ -64,29 +73,77 @@ input IngredientReorder {
 type Meal {
   id: Int!
   ingredients: [Ingredient!]!
-  order: Int
+  order: Int!
   plan: Plan
   recipe: Recipe
   servings: Int!
 }
 
+input MealReorder {
+  id: Int!
+  newOrder: Int!
+}
+
 type Mutation {
   addIngredient(input: AddIngredientInput!): Ingredient
+  addMeal(input: AddMealInput!): Meal
   createPlan(input: CreatePlanInput!): Plan
+  createRecipe(input: CreateRecipeInput!): Recipe
   deletePlan(id: Int!): Plan
+  deleteRecipe(id: Int!): Recipe
   removeIngredient(id: Int!): Ingredient
+  removeMeal(id: Int!): Meal
   reorderIngredients(input: ReorderIngredientsInput!): [Ingredient]
   updateIngredient(input: UpdateIngredientInput!): Ingredient
+  updateMeal(input: UpdateMealInput!): Meal
   updatePlan(input: UpdatePlanInput!): Plan
+  updateRecipe(input: UpdateRecipeInput!): Recipe
+  updateTarget(input: UpdateTargetInput!): NutrientTarget
+}
+
+type Nutrient {
+  activeTarget: NutrientTarget
+  displayName: String
+  id: Int!
+  name: String!
+  order: Int
+  unit: String!
+}
+
+type NutrientGroup {
+  id: Int!
+  name: String!
+  nutrients: [Nutrient!]!
+  order: Int!
+}
+
+type NutrientProfile {
+  createdAt: DateTime!
+  id: Int!
+  isActive: Boolean!
+  name: String!
+  nutrientTargets: [NutrientTarget!]!
+  updatedAt: DateTime!
+}
+
+type NutrientTarget {
+  createdAt: DateTime!
+  id: Int!
+  max: Float
+  min: Float
+  nutrient: Nutrient!
+  updatedAt: DateTime!
 }
 
 type Plan {
-  endDate: DateTime
+  createdAt: DateTime!
+  endDate: DateTime!
   id: Int!
   ingredients: [Ingredient!]!
   meals: [Meal!]!
   name: String
-  startDate: DateTime
+  startDate: DateTime!
+  updatedAt: DateTime!
 }
 
 type Portion {
@@ -95,27 +152,38 @@ type Portion {
 }
 
 type Query {
+  activeNutrientProfile: NutrientProfile!
   food(id: Int!): Food
   foods(ids: [Int!]!): [Food!]!
+  nutrient(id: Int!): Nutrient
+  nutrientGroups: [NutrientGroup!]!
+  nutrients(ids: [Int!]): [Nutrient!]!
   plan(id: Int!): Plan
   plans: [Plan!]!
   recipe(id: Int!): Recipe
-  recipes(ids: [Int!]!): [Recipe!]!
+  recipes: [Recipe!]!
   searchFoods(searchTerm: String!): [Food]
 }
 
 type Recipe {
+  createdAt: DateTime!
   id: Int!
   ingredients: [Ingredient!]!
   meals: [Meal!]!
   name: String
   servings: Int
+  updatedAt: DateTime!
 }
 
 input ReorderIngredientsInput {
   parentId: Int!
   parentType: IngredientParent!
   reorders: [IngredientReorder!]!
+}
+
+input ReorderMealsInput {
+  parentId: Int!
+  reorders: [MealReorder!]!
 }
 
 type ServingSize {
@@ -135,9 +203,26 @@ input UpdateIngredientInput {
   measure: String
 }
 
+input UpdateMealInput {
+  id: Int!
+  servings: Int
+}
+
 input UpdatePlanInput {
   endDate: DateTime
   id: Int!
   name: String
   startDate: DateTime
+}
+
+input UpdateRecipeInput {
+  id: Int!
+  name: String
+  servings: Int
+}
+
+input UpdateTargetInput {
+  id: Int!
+  max: Float
+  min: Float
 }

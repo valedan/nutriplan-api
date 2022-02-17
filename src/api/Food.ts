@@ -9,6 +9,7 @@ import {
   queryField,
 } from "nexus"
 import FoodService from "../services/food"
+import { NotFoundError } from "./shared/errors"
 
 export const getFood = queryField("food", {
   type: "Food",
@@ -62,20 +63,13 @@ export const Food = objectType({
       resolve: ({ id }, _args, ctx) => FoodService.getPortionsForFood(id, ctx),
     })
 
-    t.field("nutrients", {
+    t.field("foodNutrients", {
       type: nonNull(list(nonNull("FoodNutrient"))),
-      resolve: async ({ id }, _args, ctx) => {
-        const foodNutrients = await ctx.db.food
-          .findUnique({
-            where: { id },
-          })
-          .foodNutrients({ include: { nutrient: true } })
-
-        return foodNutrients.map((foodNutrient) => ({
-          ...foodNutrient.nutrient,
-          amount: foodNutrient.amount,
-        }))
+      args: {
+        nutrientIds: list(nonNull(intArg())),
       },
+      resolve: ({ id }, { nutrientIds }, ctx) =>
+        FoodService.getFoodNutrientsForFood(ctx, id, nutrientIds),
     })
   },
 })
@@ -91,10 +85,22 @@ export const Portion = objectType({
 export const FoodNutrient = objectType({
   name: "FoodNutrient",
   definition(t) {
-    // a Nutrient from the database with the amount in this food
     t.nonNull.int("id")
     t.nonNull.float("amount")
-    t.nonNull.string("name")
-    t.nonNull.string("unit")
+    t.field("nutrient", {
+      type: nonNull("Nutrient"),
+      resolve: async ({ id }, _args, ctx) => {
+        const nutrient = await ctx.db.foodNutrient
+          .findUnique({ where: { id } })
+          .nutrient()
+
+        if (!nutrient) {
+          throw new NotFoundError(
+            `Nutrient for FoodNutrient with id ${id} not found`
+          )
+        }
+        return nutrient
+      },
+    })
   },
 })

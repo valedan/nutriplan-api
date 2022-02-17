@@ -70,8 +70,11 @@ export const Plan = objectType({
   definition(t) {
     t.nonNull.int("id")
     t.string("name")
-    t.datetime("startDate")
-    t.datetime("endDate")
+    t.nonNull.datetime("startDate")
+    t.nonNull.datetime("endDate")
+    t.nonNull.datetime("createdAt")
+    // TODO: Adding or changing ingredients should touch the plan
+    t.nonNull.datetime("updatedAt")
 
     t.field("meals", {
       type: nonNull(list(nonNull("Meal"))),
@@ -83,33 +86,6 @@ export const Plan = objectType({
       type: nonNull(list(nonNull("Ingredient"))),
       resolve: ({ id }, _args, ctx) =>
         ctx.db.plan.findUnique({ where: { id } }).ingredients(),
-    })
-  },
-})
-
-export const Meal = objectType({
-  name: "Meal",
-  definition(t) {
-    t.nonNull.int("id")
-    t.nonNull.int("servings")
-    t.int("order")
-
-    t.field("ingredients", {
-      type: nonNull(list(nonNull("Ingredient"))),
-      resolve: ({ id }, _args, ctx) =>
-        ctx.db.meal.findUnique({ where: { id } }).ingredients(),
-    })
-
-    t.field("recipe", {
-      type: "Recipe",
-      resolve: ({ id }, _args, ctx) =>
-        ctx.db.meal.findUnique({ where: { id } }).recipe(),
-    })
-
-    t.field("plan", {
-      type: "Plan",
-      resolve: ({ id }, _args, ctx) =>
-        ctx.db.meal.findUnique({ where: { id } }).plan(),
     })
   },
 })

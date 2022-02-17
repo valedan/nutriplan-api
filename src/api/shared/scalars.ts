@@ -1,5 +1,12 @@
 import { GraphQLDate, GraphQLDateTime } from "graphql-scalars"
-import { asNexusMethod } from "nexus"
+import { decorateType } from "nexus"
 
-export const GQLDate = asNexusMethod(GraphQLDate, "date")
-export const GQLDateTime = asNexusMethod(GraphQLDateTime, "datetime")
+export const GQLDate = decorateType(GraphQLDate, {
+  sourceType: "Date",
+  asNexusMethod: "date",
+})
+
+export const GQLDateTime = decorateType(GraphQLDateTime, {
+  sourceType: "Date",
+  asNexusMethod: "datetime",
+})

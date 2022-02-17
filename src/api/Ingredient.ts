@@ -3,10 +3,12 @@ import {
   intArg,
   list,
   mutationField,
+  objectType,
   inputObjectType,
   enumType,
 } from "nexus"
 import IngredientService from "../services/ingredient"
+import { NotFoundError } from "./shared/errors"
 
 export const addIngredientInput = inputObjectType({
   name: "AddIngredientInput",
@@ -77,3 +79,28 @@ export const reorderIngredients = mutationField("reorderIngredients", {
 
 // TODO: move ingredients from plan to meal or vice versa
 // moveIngredients
+
+export const Ingredient = objectType({
+  name: "Ingredient",
+  definition(t) {
+    t.nonNull.int("id")
+    t.nonNull.float("amount")
+    t.nonNull.string("measure")
+    t.nonNull.int("order")
+
+    t.nonNull.field("food", {
+      type: nonNull("Food"),
+      resolve: async ({ id }, _args, ctx) => {
+        const food = await ctx.db.ingredient
+          .findUnique({ where: { id } })
+          .food()
+
+        if (!food) {
+          throw new NotFoundError("Food not found")
+        }
+
+        return food
+      },
+    })
+  },
+})

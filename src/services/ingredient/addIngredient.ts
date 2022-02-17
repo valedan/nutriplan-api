@@ -36,6 +36,7 @@ const addIngredient = async (
   const ingredient = await db.ingredient.create({
     data: {
       foodId: input.foodId,
+      // One of these will have an id, the other will be null
       planId: input.planId,
       recipeId: input.recipeId,
       amount: 1,
