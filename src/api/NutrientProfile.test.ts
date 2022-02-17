@@ -12,19 +12,19 @@ import {
 } from "../../tests/factories"
 import db from "../config/db"
 
-const server = createTestServer({ userId: "current_user" })
+const server = createTestServer({ userId: "profile_user" })
 const newUserContext = createTestServer({ userId: "new_user" })
 
 let currentUserActiveProfile: NutrientProfile
 
 beforeAll(async () => {
   currentUserActiveProfile = await createNutrientProfile({
-    userId: "current_user",
+    userId: "profile_user",
     isActive: true,
   })
 
   await createNutrientProfile({
-    userId: "current_user",
+    userId: "profile_user",
     isActive: false,
   })
 

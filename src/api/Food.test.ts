@@ -21,11 +21,11 @@ const mockedElastic = mocked(ElasticClient, true)
 const server = createTestServer({ userId: "food_user" })
 
 const getFoodQuery = gql`
-  query getFood($id: Int!) {
+  query getFood($id: Int!, $nutrientIds: [Int!]) {
     food(id: $id) {
       id
       description
-      foodNutrients {
+      foodNutrients(nutrientIds: $nutrientIds) {
         amount
         nutrient {
           id
@@ -40,11 +40,11 @@ const getFoodQuery = gql`
 `
 
 const getFoodsQuery = gql`
-  query getFoods($ids: [Int!]!) {
+  query getFoods($ids: [Int!]!, $nutrientIds: [Int!]) {
     foods(ids: $ids) {
       id
       description
-      foodNutrients {
+      foodNutrients(nutrientIds: $nutrientIds) {
         amount
         nutrient {
           id
@@ -58,11 +58,11 @@ const getFoodsQuery = gql`
 `
 
 const searchFoodsQuery = gql`
-  query ($searchTerm: String!) {
+  query ($searchTerm: String!, $nutrientIds: [Int!]) {
     searchFoods(searchTerm: $searchTerm) {
       id
       description
-      foodNutrients {
+      foodNutrients(nutrientIds: $nutrientIds) {
         amount
         nutrient {
           id
@@ -118,6 +118,7 @@ beforeAll(async () => {
   ])
 })
 
+// TODO: test case of passing no nutrient ids and check that correct defaults are returned
 describe("Querying a single food", () => {
   it("returns the requested food", async () => {
     const result: GraphQLResponse & {
@@ -131,7 +132,10 @@ describe("Querying a single food", () => {
         | undefined
     } = await server.executeOperation({
       query: getFoodQuery,
-      variables: { id: foods[0].id },
+      variables: {
+        id: foods[0].id,
+        nutrientIds: [nutrients[0].id, nutrients[1].id],
+      },
     })
 
     expect(result.errors).toBeUndefined()
@@ -214,7 +218,10 @@ describe("Querying multiple foods", () => {
         | undefined
     } = await server.executeOperation({
       query: getFoodsQuery,
-      variables: { ids: [foods[0].id, foods[1].id, 423423] },
+      variables: {
+        ids: [foods[0].id, foods[1].id, 423423],
+        nutrientIds: [nutrients[0].id, nutrients[1].id],
+      },
     })
 
     expect(result.errors).toBeUndefined()
@@ -252,7 +259,10 @@ describe("Searching for foods", () => {
         | undefined
     } = await server.executeOperation({
       query: searchFoodsQuery,
-      variables: { searchTerm: "test" },
+      variables: {
+        searchTerm: "test",
+        nutrientIds: [nutrients[0].id, nutrients[1].id],
+      },
     })
 
     expect(result.errors).toBeUndefined()

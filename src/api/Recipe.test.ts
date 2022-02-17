@@ -96,7 +96,9 @@ describe("Querying a single recipe", () => {
       variables: { id: 432423 },
     })
 
-    expect(result.errors).toBeUndefined()
+    expect(result.errors && result.errors[0].message).toInclude(
+      "Recipe not found"
+    )
     expect(result.data?.recipe).toBeNull()
   })
 })
