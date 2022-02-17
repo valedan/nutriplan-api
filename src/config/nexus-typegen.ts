@@ -246,7 +246,6 @@ export interface NexusGenFieldTypes {
     removeIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     removeMeal: NexusGenRootTypes['Meal'] | null; // Meal
     reorderIngredients: Array<NexusGenRootTypes['Ingredient'] | null> | null; // [Ingredient]
-    reorderMeals: Array<NexusGenRootTypes['Meal'] | null> | null; // [Meal]
     updateIngredient: NexusGenRootTypes['Ingredient'] | null; // Ingredient
     updateMeal: NexusGenRootTypes['Meal'] | null; // Meal
     updatePlan: NexusGenRootTypes['Plan'] | null; // Plan
@@ -368,7 +367,6 @@ export interface NexusGenFieldTypeNames {
     removeIngredient: 'Ingredient'
     removeMeal: 'Meal'
     reorderIngredients: 'Ingredient'
-    reorderMeals: 'Meal'
     updateIngredient: 'Ingredient'
     updateMeal: 'Meal'
     updatePlan: 'Plan'
@@ -481,9 +479,6 @@ export interface NexusGenArgTypes {
     }
     reorderIngredients: { // args
       input: NexusGenInputs['ReorderIngredientsInput']; // ReorderIngredientsInput!
-    }
-    reorderMeals: { // args
-      input: NexusGenInputs['ReorderMealsInput']; // ReorderMealsInput!
     }
     updateIngredient: { // args
       input: NexusGenInputs['UpdateIngredientInput']; // UpdateIngredientInput!

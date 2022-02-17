@@ -25,9 +25,11 @@ const getFoodQuery = gql`
     food(id: $id) {
       id
       description
-      nutrients {
-        id
+      foodNutrients {
         amount
+        nutrient {
+          id
+        }
       }
       portions {
         measure
@@ -42,9 +44,11 @@ const getFoodsQuery = gql`
     foods(ids: $ids) {
       id
       description
-      nutrients {
-        id
+      foodNutrients {
         amount
+        nutrient {
+          id
+        }
       }
       portions {
         gramWeight
@@ -58,9 +62,11 @@ const searchFoodsQuery = gql`
     searchFoods(searchTerm: $searchTerm) {
       id
       description
-      nutrients {
-        id
+      foodNutrients {
         amount
+        nutrient {
+          id
+        }
       }
       portions {
         gramWeight
@@ -115,7 +121,14 @@ beforeAll(async () => {
 describe("Querying a single food", () => {
   it("returns the requested food", async () => {
     const result: GraphQLResponse & {
-      data?: { food?: NexusGenFieldTypes["Food"] } | null | undefined
+      data?:
+        | {
+            food?: Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            }
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: getFoodQuery,
       variables: { id: foods[0].id },
@@ -126,11 +139,11 @@ describe("Querying a single food", () => {
     expect(result.data?.food?.id).toEqual(foods[0].id)
 
     expect(
-      result.data?.food?.nutrients.map(({ id }) => id)
+      result.data?.food?.foodNutrients.map(({ nutrient }) => nutrient.id)
     ).toIncludeSameMembers(nutrients.map(({ id }) => id))
 
     expect(
-      result.data?.food?.nutrients.map(({ amount }) => amount)
+      result.data?.food?.foodNutrients.map(({ amount }) => amount)
     ).toIncludeSameMembers(foodNutrients.map(({ amount }) => amount))
 
     expect(
@@ -140,7 +153,14 @@ describe("Querying a single food", () => {
 
   it("includes all available portions", async () => {
     const result: GraphQLResponse & {
-      data?: { food?: NexusGenFieldTypes["Food"] } | null | undefined
+      data?:
+        | {
+            food?: Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            }
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: getFoodQuery,
       variables: { id: foods[2].id },
@@ -163,7 +183,14 @@ describe("Querying a single food", () => {
 
   it("returns an error if food is not found", async () => {
     const result: GraphQLResponse & {
-      data?: { food?: NexusGenFieldTypes["Food"] } | null | undefined
+      data?:
+        | {
+            food?: Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            }
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: getFoodQuery,
       variables: { id: 432423 },
@@ -177,7 +204,14 @@ describe("Querying a single food", () => {
 describe("Querying multiple foods", () => {
   it("returns the requested foods", async () => {
     const result: GraphQLResponse & {
-      data?: { foods?: NexusGenFieldTypes["Food"][] } | null | undefined
+      data?:
+        | {
+            foods?: (Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            })[]
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: getFoodsQuery,
       variables: { ids: [foods[0].id, foods[1].id, 423423] },
@@ -193,7 +227,7 @@ describe("Querying multiple foods", () => {
     expect(
       result.data?.foods
         ?.find(({ id }) => id === foods[0].id)
-        ?.nutrients.map(({ id }) => id)
+        ?.foodNutrients.map(({ nutrient }) => nutrient.id)
     ).toIncludeSameMembers(nutrients.map(({ id }) => id))
   })
 })
@@ -208,7 +242,14 @@ describe("Searching for foods", () => {
     })
 
     const result: GraphQLResponse & {
-      data?: { searchFoods?: NexusGenFieldTypes["Food"][] } | null | undefined
+      data?:
+        | {
+            searchFoods?: (Omit<NexusGenFieldTypes["Food"], "foodNutrients"> & {
+              foodNutrients: NexusGenFieldTypes["FoodNutrient"][]
+            })[]
+          }
+        | null
+        | undefined
     } = await server.executeOperation({
       query: searchFoodsQuery,
       variables: { searchTerm: "test" },
@@ -224,7 +265,7 @@ describe("Searching for foods", () => {
     expect(
       result.data?.searchFoods
         ?.find(({ id }) => id === foods[0].id)
-        ?.nutrients.map(({ id }) => id)
+        ?.foodNutrients.map(({ nutrient }) => nutrient.id)
     ).toIncludeSameMembers(nutrients.map(({ id }) => id))
   })
 })

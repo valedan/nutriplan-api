@@ -94,7 +94,6 @@ type Mutation {
   removeIngredient(id: Int!): Ingredient
   removeMeal(id: Int!): Meal
   reorderIngredients(input: ReorderIngredientsInput!): [Ingredient]
-  reorderMeals(input: ReorderMealsInput!): [Meal]
   updateIngredient(input: UpdateIngredientInput!): Ingredient
   updateMeal(input: UpdateMealInput!): Meal
   updatePlan(input: UpdatePlanInput!): Plan

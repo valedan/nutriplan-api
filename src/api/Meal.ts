@@ -67,11 +67,12 @@ export const updateMeal = mutationField("updateMeal", {
   resolve: async (_, { input }, ctx) => MealService.updateMeal(input, ctx),
 })
 
-export const reorderMeals = mutationField("reorderMeals", {
-  type: list("Meal"),
-  args: { input: nonNull(reorderMealsInput) },
-  resolve: async (_, { input }, ctx) => MealService.reorderMeals(input, ctx),
-})
+// TODO
+// export const reorderMeals = mutationField("reorderMeals", {
+//   type: list("Meal"),
+//   args: { input: nonNull(reorderMealsInput) },
+//   resolve: async (_, { input }, ctx) => MealService.reorderMeals(input, ctx),
+// })
 
 // TODO: Ungroup meal
 
